@@ -95,3 +95,22 @@ For illustration only: if monthly costs were EUR 50, break-even hypothetical
 turnover would be EUR 5,000 at a TRUE 1% net advantage, or EUR 2,500 at 2%, before
 capital risk, taxes and other costs. Those advantages are unproven; these figures
 are sensitivity examples, not a recommendation or projected return.
+
+## Confirmed paid-plan and deployed VPS update
+
+Owner confirmed the existing USD 30/month odds tier; the EUR 20 budget is now
+additional hosting headroom rather than total odds+hosting. Owner's VPS logs show
+first successful odds collection and enabled collector/health timer. Hosting
+invoice, tax and backup charge remain unverified. No Sportmonks purchase made.
+
+Use existing odds allowance to add six-hour completed-results calls: approximately
+240 credits per 30 days. Revised combined VPS command caps at 60 credits/day and
+1,500/month, rather than the former free-tier 20/day, 400/month setting. Pilot odds
+cadence is retained. Counts include reservations/retries; unexpected provider cost
+can exceed a cap by one response. No automatic top-up or subscription upgrade.
+
+Sportmonks advertised starter adds EUR 29/month before VAT if chosen; historical
+add-on starts at EUR 29 one-time for older seasons, but our actual entitlement
+needs confirmation. It would be a separate budget decision, not part of the
+existing hosting allocation. Sample request and audit criteria are in
+PROVIDER_SAMPLE_REQUEST.md. No trial activated; paid trials can auto-bill.

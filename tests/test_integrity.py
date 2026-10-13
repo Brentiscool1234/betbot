@@ -176,3 +176,70 @@ class PilotCadenceTests(unittest.TestCase):
         current=datetime.now(timezone.utc)
         for seconds, expected in ((3600,3600),(21600,3600),(21601,21600),(86400,21600)):
             self.assertEqual(cadence([{'commence_time':(current+timedelta(seconds=seconds)).isoformat()}],current,'pilot'),expected)
+
+
+def score_envelope(current,completed=True):
+    t=current.isoformat()
+    return {'received_at':t,'quota':{'remaining':'1000','last':'2'},'response':[
+      {'id':'live','sport_key':'soccer_epl','commence_time':(current-timedelta(hours=3)).isoformat(),
+       'home_team':'A','away_team':'B','completed':completed,'last_update':(current-timedelta(minutes=10)).isoformat(),
+       'scores':[{'name':'A','score':'2'},{'name':'B','score':'1'}]}]}
+
+
+class ScoresTests(unittest.TestCase):
+    def test_no_backdating_or_live_result_labels(self):
+        from edge.scores import convert_scores
+        current=datetime(2026,1,1,tzinfo=timezone.utc)
+        self.assertEqual(convert_scores(score_envelope(current,False)),[])
+        with tempfile.TemporaryDirectory() as tmp:
+            store=Store(Path(tmp)/'edge.sqlite'); rows=convert_scores(score_envelope(current)); version=store.ingest(rows)
+            before=store.get_state('the-odds-api:live',(current-timedelta(seconds=1)).isoformat(),version)
+            self.assertEqual(before,[])
+            after=store.get_state('the-odds-api:live',current.isoformat(),version)
+            self.assertEqual(next(r['payload']['home_goals'] for r in after if r['kind']=='result'),2); store.close()
+    def test_invalid_final_scores_and_future_updates_rejected(self):
+        from edge.scores import convert_scores
+        current=datetime(2026,1,1,tzinfo=timezone.utc)
+        for score in ('-1','2.5',True):
+            e=score_envelope(current); e['response'][0]['scores'][0]['score']=score
+            with self.assertRaises(ValueError): convert_scores(e)
+        e=score_envelope(current); e['response'][0]['last_update']=(current+timedelta(hours=1)).isoformat()
+        with self.assertRaises(ValueError): convert_scores(e)
+        e=score_envelope(current); e['response'][0]['scores'][0]['name']='Wrong'
+        with self.assertRaises(ValueError): convert_scores(e)
+    def test_shared_version_budget_cadence_and_recovery(self):
+        from edge.scores import collect_scores
+        current=datetime(2026,1,1,tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as tmp:
+            odds=collect(tmp,lambda:envelope(current),current)
+            scores=collect_scores(tmp,lambda:score_envelope(current),current)
+            self.assertEqual(scores['completed_events'],1)
+            self.assertEqual(json.loads((Path(tmp)/'budget.json').read_text())['daily_used'],3)
+            updated=json.loads((Path(tmp)/'status.json').read_text())
+            self.assertEqual(updated['next_due'],odds['next_due']); self.assertEqual(updated['last_success'],odds['last_success'])
+            self.assertEqual(updated['dataset_version'],scores['dataset_version'])
+            def unwanted(): raise AssertionError('not-due must not make paid request')
+            self.assertEqual(collect_scores(tmp,unwanted,current+timedelta(minutes=1))['status'],'not_due')
+            archived=score_envelope(current+timedelta(hours=7)); sha=archive(Path(tmp)/'score-archives',archived)
+            recovered=collect_scores(tmp,lambda:score_envelope(current+timedelta(hours=8)),current+timedelta(hours=8))
+            self.assertIn(sha,recovered['applied_archives'])
+            latest=collect(tmp,lambda:envelope(current+timedelta(hours=9)),current+timedelta(hours=9))
+            store=Store(Path(tmp)/'edge.sqlite')
+            self.assertTrue(any(r['kind']=='result' for r in store.records(latest['dataset_version']))); store.close()
+    def test_result_budget_reserves_two_and_prevents_request(self):
+        from edge.scores import collect_scores
+        current=datetime(2026,1,1,tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as tmp:
+            collect(tmp,lambda:envelope(current),current)
+            def unwanted(): raise AssertionError('budget must prevent score request')
+            self.assertEqual(collect_scores(tmp,unwanted,current,daily_limit=2)['status'],'paused_budget')
+    def test_results_health_only_required_when_enabled(self):
+        from edge.health import check
+        from edge.scores import collect_scores
+        current=datetime(2026,1,1,tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as tmp:
+            collect(tmp,lambda:envelope(current),current)
+            (Path(tmp)/'results-enabled.json').write_text('{}')
+            self.assertFalse(check(tmp,current)['healthy'])
+            collect_scores(tmp,lambda:score_envelope(current),current)
+            self.assertTrue(check(tmp,current)['healthy'])

@@ -61,10 +61,13 @@ def collect(directory='data/prospective', fetcher=None, current=None, force=Fals
 
 
 def main():
-    p=argparse.ArgumentParser(); p.add_argument('--directory',default='data/prospective'); p.add_argument('--watch',action='store_true'); p.add_argument('--force',action='store_true'); p.add_argument('--daily-limit',type=int,default=20); p.add_argument('--monthly-limit',type=int,default=400)
+    p=argparse.ArgumentParser(); p.add_argument('--directory',default='data/prospective'); p.add_argument('--watch',action='store_true'); p.add_argument('--force',action='store_true'); p.add_argument('--daily-limit',type=int,default=60); p.add_argument('--monthly-limit',type=int,default=1500)
+    p.add_argument('--with-results',action='store_true')
     p.add_argument('--profile',choices=('pilot','research'),default='pilot')
     args=p.parse_args()
     if args.watch and args.force: p.error('--force cannot be combined with --watch')
+    if args.with_results:
+        atomic_json(Path(args.directory)/'results-enabled.json',{'enabled':True})
     stopped=False
     def stop(*_):
         nonlocal stopped
@@ -75,6 +78,14 @@ def main():
             result=collect(args.directory,force=args.force,daily_limit=args.daily_limit,monthly_limit=args.monthly_limit,profile=args.profile)
             if result['status']!='not_due':
                 print(json.dumps({k:v for k,v in result.items() if k!='applied_archives'}),flush=True)
+            if args.with_results:
+                from .scores import collect_scores
+                try:
+                    scores=collect_scores(args.directory,daily_limit=args.daily_limit,monthly_limit=args.monthly_limit)
+                    if scores['status'] != 'not_due':
+                        print(json.dumps({'stream':'results',**{k:v for k,v in scores.items() if k!='applied_archives'}}),flush=True)
+                except Exception as error:
+                    print(json.dumps({'stream':'results','status':'failed','error':str(error) if type(error) is ValueError else type(error).__name__}),flush=True)
             pause=60
         except Exception as error:
             print(json.dumps({'status':'failed','error':str(error) if type(error) is ValueError else type(error).__name__}),flush=True)

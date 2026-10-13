@@ -17,6 +17,18 @@ def check(directory,current=None):
     if age<0 or age>status['interval_seconds']+600: problems.append('collection stale or clock incorrect')
     budget=directory/'budget-status.json'
     if budget.exists() and json.loads(budget.read_text()).get('status')=='paused_budget': problems.append('collection paused by budget; coverage incomplete')
+    if (directory/'results-enabled.json').exists():
+        scores_path=directory/'scores-status.json'
+        if not scores_path.exists():
+            problems.append('no successful results collection recorded')
+        else:
+            scores=json.loads(scores_path.read_text())
+            scores_age=(current-datetime.fromisoformat(timestamp(scores['last_success']))).total_seconds()
+            if scores_age<0 or scores_age>scores['interval_seconds']+600:
+                problems.append('results collection stale or clock incorrect')
+        scores_budget=directory/'scores-budget-status.json'
+        if scores_budget.exists() and json.loads(scores_budget.read_text()).get('status')=='paused_budget':
+            problems.append('results collection paused by budget')
     if shutil.disk_usage(directory).free<200*1024*1024: problems.append('less than 200 MiB disk available')
     try:
         if int(status.get('quota',{}).get('remaining','1000'))<200: problems.append('provider credits below 200')

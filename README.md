@@ -32,3 +32,12 @@ and [VPS operations](docs/OPERATIONS.md).
 Phase 1 is incomplete: licensed results and statistics with historical
 publication evidence remain missing. Do not treat fixture/odds coverage as
 full acceptance or evidence of a profitable model.
+
+## Completed results and sample request
+
+The VPS service now uses `python -m edge.collect --watch --with-results` to gather
+completed EPL scores every six hours using the existing Odds API allowance.
+Results use actual receipt availability; live scores cannot become final labels.
+See [VPS update steps](docs/OPERATIONS.md) and the
+[prepared historical sample request](docs/PROVIDER_SAMPLE_REQUEST.md).
+No new statistics subscription or trial has been activated.

@@ -50,3 +50,28 @@ tier plus small VPS recommended. Defaults now 20 credits/day and 400/month; pilo
 cadence 6h normally, hourly within 6h. No paid subscription cancelled or host
 purchased. Owner must verify account renewal and free-tier eligibility. Existing
 historical archives remain reusable; no further historical downloads proposed.
+
+## Prospective results and source-sample update
+
+Owner confirmed paid USD 30/month odds plan and deployed OVH VPS: user-provided
+logs show successful 20-event collection, healthy check and enabled startup/timer.
+This is evidence of initial remote operation; direct SSH/reboot/continuous-day
+verification has not been performed by this agent. Backups/notification delivery
+remain open.
+
+Added final-score adapter using existing Odds API daysFrom=3 endpoint. Completed
+results only; observed availability prevents backdating. Shared lock, persistent
+budget, dataset version and replay protect overlap/recovery. --with-results enables
+six-hour result polling and results freshness checks. Revised service caps combined
+usage at 60/day, 1,500/month within owner-confirmed 20k tier; pilot odds cadence
+retained. No new subscription purchase. User must pull/install the update on VPS.
+
+25 tests pass. Live result check stored 4 completed EPL results, cost 2 credits,
+quota remaining 19,730. This workspace's scores are prospective and separate from
+the 2024 historical dataset. Scores do not supply shots/xG or historical statistics.
+
+Sportmonks current pricing/terms/demo reviewed; request for 5–10 licensed 2024/25
+matches, timestamp/revision evidence and exact costs prepared in
+ docs/PROVIDER_SAMPLE_REQUEST.md. Request not sent and no trial activated. Provider
+credentials/contact response are needed for a licensed historical sample; public
+schema demo is insufficient for timestamp acceptance. Phase 1 remains incomplete.

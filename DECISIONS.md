@@ -21,3 +21,11 @@ Licensed result/statistics input and historical timestamp evidence remain requir
 2026-10-13: Owner chose a 20/month hosting + odds pilot budget. Default to sparse
 pilot cadence and 20/day, 400/month limits, with free odds tier recommended. This
 supersedes the earlier 60/day, 1500/month recommendation. Currency assumed EUR.
+
+2026-10-13: Collect completed scores prospectively with the existing paid odds
+provider before buying statistics. Score receipt is availability, never kickoff;
+only completed=true events become final labels. Use same immutable dataset and
+budget lock as odds. Keep a three-day lookback and six-hour cadence. Shared caps
+60/day and 1500/month now fit the owner's confirmed paid 20k plan, superseding the
+free-tier cap. Historical stats/ML gate remains open; sample request prepared and
+no auto-billing trial activated.

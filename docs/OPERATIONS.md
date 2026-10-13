@@ -76,3 +76,40 @@ Before calling deployment complete: verify first success, quota, persistent file
 health check, restart/reboot survival and a full day of uninterrupted coverage.
 Preserve an incident/gap log. This cloud task cannot verify those remote checks
 without access to the selected server.
+
+## Results collection update — 2026-10-13
+
+The owner confirmed an existing USD 30/month odds subscription and supplied VPS
+logs showing odds collection and enabled health timer working. No direct SSH
+connection from this workspace has been established. The revised service command
+adds --with-results: final EPL scores from the last three days are polled every
+six hours using the same lock, data directory, immutable dataset and budget ledger.
+Unfinished/live scores are ignored. No shots, xG or lineups are collected.
+
+Combined default limits now 60 credits/day and 1,500/month, within the confirmed
+20k-credit plan, keeping pilot odds cadence. This supersedes the earlier free-tier
+20/day, 400/month deployment advice. Results normally add 240 credits/30 days;
+actual quota headers remain authoritative. Other API clients share your credits.
+No subscription change or new invoice is incurred by this code update.
+
+Update the existing VPS checkout without copying or showing secrets:
+
+```sh
+cd ~/betbot
+git pull --ff-only origin edge/restore-data-budget-20261013
+sudo bash configs/install-vps.sh
+sudo journalctl -u edge-collector.service -n 15 --no-pager
+sudo systemctl start edge-health.service
+sudo journalctl -u edge-health.service -n 5 --no-pager
+```
+
+The existing root-only /etc/edge/collector.env is reused. Expect a results log
+entry containing stream=results, status=collected and completed_events (zero can
+be normal when no recent matches are covered). The results-enabled marker causes
+health to flag stale/missing results as well as odds. On restart, the watcher
+checks both schedules; an existing odds next_due is preserved.
+
+Standalone check (run as the service user with the key supplied by the service,
+not by copying credentials into command history): python -m edge.scores.
+Do not use arbitrary directories: odds and results must share one persistent
+ledger/database. Legacy collectors without --with-results remain odds-only.
