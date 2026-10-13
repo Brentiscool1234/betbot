@@ -7,3 +7,9 @@ No model development until the Phase 1 acceptance gate passes.
 No raw source data or secrets in Git. Never print API keys or authenticated URLs.
 Read docs/OPERATIONS.md for startup; do not start duplicate watchers.
 Update PROJECT_STATE.md after milestones and failures.
+
+2026-10-13 owner instruction supersedes the earlier ban on ALL model development:
+experimental Poisson baseline and paper-only tracker are now explicitly requested.
+Implement those with integrity checks and no false readiness/profitability claim.
+Historical acceptance and model validation gates remain incomplete. No complex ML,
+consumer dashboard, real-money staking or bet-placement integration authorized.

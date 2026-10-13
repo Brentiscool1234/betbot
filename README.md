@@ -41,3 +41,12 @@ Results use actual receipt availability; live scores cannot become final labels.
 See [VPS update steps](docs/OPERATIONS.md) and the
 [prepared historical sample request](docs/PROVIDER_SAMPLE_REQUEST.md).
 No new statistics subscription or trial has been activated.
+
+## Experimental match tracker
+
+`python -m edge.tracker --watch` follows collected fixtures and shows Poisson
+probabilities, market comparisons and experimental paper candidates once enough
+point-in-time history and fresh odds exist. Otherwise it reports insufficient
+data/no paper bet. Decisions are frozen and settled in a separate paper log.
+See [tracker setup and model assumptions](docs/PAPER_TRACKER.md). This is an
+unvalidated baseline, not a real-money betting recommendation.

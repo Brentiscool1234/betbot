@@ -29,3 +29,12 @@ budget lock as odds. Keep a three-day lookback and six-hour cadence. Shared caps
 60/day and 1500/month now fit the owner's confirmed paid 20k plan, superseding the
 free-tier cap. Historical stats/ML gate remains open; sample request prepared and
 no auto-billing trial activated.
+
+2026-10-13: Owner explicitly requests prediction formula and match-following tool.
+Implement an experimental Poisson venue baseline and terminal paper tracker now,
+superseding the earlier blanket model-development ban for this bounded scope.
+Gate 1 remains incomplete; no profitability, validated signal or real-money sizing.
+Require 50 league results and five venue-specific results per team; shrink means
+with a five-match prior. Frozen exploratory rule is 5% estimated EV and 3pp edge,
+two fresh books, one simulated unit. These are unvalidated research assumptions.
+Store NO PAPER BET as well as candidate decisions, and immutable separate results.

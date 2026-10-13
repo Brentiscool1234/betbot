@@ -75,3 +75,26 @@ matches, timestamp/revision evidence and exact costs prepared in
  docs/PROVIDER_SAMPLE_REQUEST.md. Request not sent and no trial activated. Provider
 credentials/contact response are needed for a licensed historical sample; public
 schema demo is insufficient for timestamp acceptance. Phase 1 remains incomplete.
+
+## Experimental prediction/tracker update
+
+Owner explicitly requested formula implementation and match-following guidance.
+Experimental independent-Poisson venue model and terminal/scheduled paper tracker
+added before full Phase 1 acceptance under that instruction. No real-money staking
+or bet-placement integration. Minimum history 50 league results/five home-away
+venue results per relevant team; current four observed results yield insufficient
+data. Two fresh bookmakers required. Freeze one experimental decision per match,
+including no-paper-bet, and append result settlement/Brier/log-loss/ROI separately.
+Prediction records include dataset/model/policy/code hashes and source provenance.
+Kickoff revisions void the paper record; latest display is not immutable history.
+Tracker timer every five minutes reads local data and uses no API credits. Remote
+VPS must pull/update; not installed there automatically. Calibration/chronological
+market-baseline comparison, sufficient research sample and prospective acceptance
+remain open. See docs/PAPER_TRACKER.md for assumptions and interpretation.
+
+Validation for tracker update: 35 tests pass, including future odds/results,
+Poisson probability mass, deterministic replay, sparse-history rejection, frozen
+decisions, settlement and kickoff-change voiding. Live local scan follows all 20
+upcoming events and correctly produces no predictions with only four results.
+Installer shell syntax and all five systemd unit checks pass. Paper evaluation
+records market-consensus Brier/log-loss alongside the model; no skill claimed.
