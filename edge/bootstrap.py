@@ -73,20 +73,25 @@ def download(revision,path):
     except (urllib.error.URLError,OSError): raise ValueError('public source download failed') from None
 
 
-def run(directory='data/prospective'):
+def run(directory='data/prospective',revision=REVISION):
     directory=Path(directory); directory.mkdir(parents=True,exist_ok=True)
-    licence=download(REVISION,'LICENSE.md').decode()
+    if not re.fullmatch('[0-9a-f]{40}',revision): raise ValueError('invalid source revision')
+    licence=download(revision,'LICENSE.md').decode()
     if 'CC0 1.0 Universal' not in licence: raise ValueError('source licence changed; review needed')
     cache=directory/'bootstrap-archives'; cache.mkdir(exist_ok=True)
     # Cache one immutable pinned revision per season, including the licence snapshot.
     envelopes=[]
     for season in SEASONS:
-        pointer=cache/(season+'.pointer')
+        pointer=cache/(season+'-'+revision+'.pointer')
+        legacy=cache/(season+'.pointer')
+        if not pointer.exists() and legacy.exists():
+            candidate=load_archive(cache/(legacy.read_text().strip()+'.json'))
+            if candidate['revision']==revision: pointer.write_text(legacy.read_text())
         if pointer.exists(): envelope=load_archive(cache/(pointer.read_text().strip()+'.json'))
         else:
-            raw=download(REVISION,season+'/en.1.json')
-            envelope={'received_at':now(),'source':'openfootball','revision':REVISION,'season':season,
-                      'source_url':BASE+REVISION+'/'+season+'/en.1.json','licence':licence,'response':json.loads(raw)}
+            raw=download(revision,season+'/en.1.json')
+            envelope={'received_at':now(),'source':'openfootball','revision':revision,'season':season,
+                      'source_url':BASE+revision+'/'+season+'/en.1.json','licence':licence,'response':json.loads(raw)}
             sha=archive(cache,envelope); pointer.write_text(sha+'\n')
         envelopes.append(envelope)
     with (directory/'collector.lock').open('a') as lock:
@@ -102,7 +107,7 @@ def run(directory='data/prospective'):
                 version=store.ingest(records,version)
                 reports.append({'season':envelope['season'],'completed_results':len(records)//2,'skipped':skipped})
             status['dataset_version']=version; atomic_json(status_path,status)
-            report={'source':'openfootball','licence':'CC0-1.0','revision':REVISION,'dataset_version':version,
+            report={'source':'openfootball','licence':'CC0-1.0','revision':revision,'dataset_version':version,
                     'seasons':reports,'availability':'actual cached receipt only; no historical backdating',
                     'warning':'community results, partial recent coverage; no shots/xG or verified historical publication'}
             atomic_json(directory/'bootstrap-report.json',report)

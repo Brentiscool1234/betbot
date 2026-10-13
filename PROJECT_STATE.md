@@ -152,3 +152,20 @@ GUI HEAD fix: user verified edge-gui.service active but curl -I returned501
 because HEAD was unimplemented. Added HEAD support matching GET headers without
 body, retaining Host/security checks. This diagnostic error does not establish
 that the browser GET or SSH tunnel failed. Focused GUI tests pass.
+
+## Manual data acquisition from GUI
+
+Owner asked for a function that goes looking for data when no bets are shown.
+Added explicit Refresh data action separate from Reload view. Asynchronous bounded
+job fetches new odds/recent completed scores, resolves latest OpenFootball revision,
+rechecks CC0/imports observed history, then recomputes tracker. Shared budgets and
+collector locks remain; manual cooldown 5min/process lock prevent duplicate jobs.
+Three odds-provider credits estimated per complete refresh. No arbitrary scraper,
+paid signup, bet placement or rule override. Historical timestamps never backdated.
+
+GUI service now receives existing API envfile and can write only data directory
+under ProtectSystem strict. POST action requires local Host/same-origin header,
+CSRF nonce, exact JSON action; browser never receives API credentials. Interrupted
+jobs recovered/reported. GUI shows progress/partial failures and next paper window.
+50 tests pass; JS syntax, shell and GUI unit checks pass. Remote VPS requires
+pull/install and browser reload. Browser visual QA still unavailable here.

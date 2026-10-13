@@ -51,3 +51,8 @@ SSH tunnel. No extra hosting budget, public unauthenticated server or data push
 secret is introduced. Dashboard is read-only with explicit current/snapshot/stale
 status. Sites instructions consulted; publishing helper unavailable in executor,
 so no abandoned hosted Site registered. Browser visual checks remain unverified.
+
+2026-10-14: Manual GUI data refresh is authorized by owner request. Use existing
+Odds API and CC0 source only, async progress, shared credit limits, process locks,
+5min cooldown and CSRF/origin guard. Distinguish acquiring data from simply reloading
+the view. New data cannot change the 24h paper policy or retroactively edit decisions.

@@ -65,3 +65,8 @@ A responsive match desk with paper signals, model/market reasoning, research
 metrics and collection status runs privately on the VPS. See
 [browser setup](docs/GUI.md) for installation and SSH-tunnel access at localhost:8765.
 It adds no odds API calls or hosting subscription and does not place wagers.
+
+The browser's **Refresh data** button fetches new odds/recent scores and updated
+CC0 result history before recomputing the tracker. It typically uses three credits
+from the existing odds allowance; existing caps and a five-minute cooldown apply.
+**Reload view** only refreshes the stored snapshot. No paper bet is forced.

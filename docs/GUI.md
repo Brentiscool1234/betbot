@@ -70,3 +70,40 @@ routes and protections. JavaScript syntax and six systemd units validate. Browse
 visual QA was unavailable in this environment; no screenshot or device-tested
 layout is claimed. Sites publishing helpers were unavailable, so no hosted Site
 was created/published; the GUI is delivered with the existing VPS application.
+
+## Refresh data — 2026-10-14 update
+
+The GUI now has two distinct buttons: Reload view reads the latest stored snapshot;
+Refresh data requests new observations, then recomputes the tracker. The latter
+requires the existing root-only API key file supplied to the GUI service by
+systemd, plus write access to /var/lib/edge. No API key appears in browser responses.
+
+Refresh data runs asynchronously: force-collect current EPL UK/1X2 odds, fetch
+completed scores with the three-day window, resolve the latest OpenFootball Git
+commit, recheck CC0 and archive/import that revision, then run the tracker. Each
+stage reports success/failure; a source failure does not prevent the remaining
+stages. This is acquisition from already reviewed sources, not unrestricted web
+scraping, news extraction, new paid-provider signup or model validation.
+
+Typical Odds API cost is three credits per complete refresh (one odds + two
+scores); public source checks use no odds credits. Shared daily/monthly limits
+still apply. A persistent process lock prevents overlapping jobs, and a five-minute
+cooldown bounds manual repetitions across restarts. Existing collector locks can
+cause a stage to report busy/partial; no silent budget or lock override occurs.
+Interrupted refreshes are reported after restart. Original archive receipt times
+are retained on replay, even if a newer source revision is later imported.
+
+The state-changing endpoint requires same-origin loopback access, a per-server
+CSRF nonce from the dashboard, JSON content and an exact action. Arbitrary routes,
+URL fetching or data modifications are not exposed. Host checks and SSH tunnel
+access remain. This supersedes the earlier entirely read-only description only
+for the explicit bounded refresh action; no predictions or settlements are edited.
+
+The interface shows progress, partial failures and the next 24h decision-window
+opening. Fresh data does not force a paper bet or bypass a frozen earlier decision,
+missing team histories, a stale quote or a signal threshold. Optional imported
+JSON snapshots cannot start refresh; reconnect to the VPS first.
+
+Apply with the usual git pull and sudo bash configs/install-vps.sh on the VPS,
+then refresh the browser page. No additional subscription required. Browser visual
+QA remains unverified; HTTP/security/job and JavaScript syntax checks were run.

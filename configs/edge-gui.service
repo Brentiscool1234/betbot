@@ -8,6 +8,7 @@ User=edge
 Group=edge
 WorkingDirectory=/opt/edge
 Environment=PYTHONDONTWRITEBYTECODE=1
+EnvironmentFile=/etc/edge/collector.env
 ExecStart=/usr/bin/python3 -u -m edge.gui --directory /var/lib/edge/prospective --port 8765
 Restart=always
 RestartSec=10
@@ -16,6 +17,7 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
+ReadWritePaths=/var/lib/edge
 
 [Install]
 WantedBy=multi-user.target
