@@ -43,7 +43,7 @@ Storage/archive growth, backup charges, VAT and exchange rates vary. Hosting is
 not provisioned. A licensed results/statistics source is REQUIRED and currently
 unpriced: total project cost cannot yet be declared feasible.
 
-For the current odds-only pilot, a rough ongoing floor is USD 30/month plus
+For comparison, a paid historical-access setup would cost USD 30/month plus
 EUR 5–10 hosting. Keep currencies separate; do not silently sum them. Engineering
 time and future statistics licensing are additional costs. An illustrative
 approval ceiling for the pilot would be EUR 50-equivalent/month TOTAL, but no

@@ -10,7 +10,7 @@ rolling result features with explicit missing values, historical adapter and
 adaptive locked collector, crash replay/checksums, budget reservations and health
 checks, Ubuntu VPS/systemd deployment files and installer.
 
-Validation: 19 tests pass. Replay of all 12 archives reproduced dataset hash and
+Validation: 20 tests pass. Replay of all 12 archives reproduced dataset hash and
 all 100 historical state hashes. Observation-clock queries returned no 2024 states
 from 2026 receipt. Installer shell syntax and systemd unit verification pass.
 Remote installation/reboot behavior has not been tested on a VPS.
