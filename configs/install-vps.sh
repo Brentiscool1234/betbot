@@ -24,12 +24,13 @@ if ! id edge >/dev/null 2>&1; then
 fi
 install -d -m 755 /opt/edge /opt/edge/edge
 install -m 644 "$EDGE_SOURCE_DIR"/edge/*.py /opt/edge/edge/
+install -m 644 "$EDGE_SOURCE_DIR"/edge/gui.html /opt/edge/edge/gui.html
 install -d -o edge -g edge -m 700 /var/lib/edge /var/lib/edge/prospective
-for unit in edge-collector.service edge-health.service edge-health.timer edge-tracker.service edge-tracker.timer; do
+for unit in edge-collector.service edge-health.service edge-health.timer edge-tracker.service edge-tracker.timer edge-gui.service; do
   install -m 644 "$EDGE_SOURCE_DIR/configs/$unit" /etc/systemd/system/
 done
-systemd-analyze verify /etc/systemd/system/edge-collector.service /etc/systemd/system/edge-health.service /etc/systemd/system/edge-health.timer /etc/systemd/system/edge-tracker.service /etc/systemd/system/edge-tracker.timer
+systemd-analyze verify /etc/systemd/system/edge-collector.service /etc/systemd/system/edge-health.service /etc/systemd/system/edge-health.timer /etc/systemd/system/edge-tracker.service /etc/systemd/system/edge-tracker.timer /etc/systemd/system/edge-gui.service
 systemctl daemon-reload
-systemctl enable edge-collector.service edge-health.timer edge-tracker.timer
-systemctl restart edge-collector.service edge-health.timer edge-tracker.timer
+systemctl enable edge-collector.service edge-health.timer edge-tracker.timer edge-gui.service
+systemctl restart edge-collector.service edge-health.timer edge-tracker.timer edge-gui.service
 systemctl --no-pager status edge-collector.service

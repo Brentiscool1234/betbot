@@ -45,3 +45,9 @@ backdate. Explicit aliases/fixture matching, source archive/licence, conflict
 checks and model event deduplication prevent duplicates and silent source clashes.
 Paid statistics remain an optional separately priced data improvement; owner is
 open to it, but no trial/purchase is activated. Historical acceptance remains open.
+
+2026-10-14: Run the requested GUI on the existing VPS and access it over a local
+SSH tunnel. No extra hosting budget, public unauthenticated server or data push
+secret is introduced. Dashboard is read-only with explicit current/snapshot/stale
+status. Sites instructions consulted; publishing helper unavailable in executor,
+so no abandoned hosted Site registered. Browser visual checks remain unverified.

@@ -58,3 +58,10 @@ prospective dataset, with availability set to actual receipt today. No token or
 subscription required. See [VPS import steps and data limits](docs/RESULTS_BOOTSTRAP.md).
 The enriched forward baseline can produce experimental probabilities when each
 team has enough history; calibration/profitability remain unproven.
+
+## Browser dashboard
+
+A responsive match desk with paper signals, model/market reasoning, research
+metrics and collection status runs privately on the VPS. See
+[browser setup](docs/GUI.md) for installation and SSH-tunnel access at localhost:8765.
+It adds no odds API calls or hosting subscription and does not place wagers.

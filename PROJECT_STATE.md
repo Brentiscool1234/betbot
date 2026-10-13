@@ -127,3 +127,23 @@ Tracker display update: paper selections now name the team/outcome, show the
 estimated outcome probability explicitly as uncalibrated, and retain quoted odds,
 bookmaker and one simulated unit. No-bet decisions show NO BET (paper). This is
 a presentation change; model probabilities and frozen decision rules unchanged.
+
+## Browser GUI — 2026-10-14
+
+Owner requested a proper GUI. Added responsive browser match desk, probability
+bars, searchable/sortable paper-bet/no-bet/data-needed cards, reasoning dialog,
+performance and data-status views. Reads actual tracker/status/results/budget and
+bootstrap files through a read-only loopback server; no additional API calls.
+Explicit experimental/uncalibrated labels, frozen timestamps and disconnected/
+stale indicators retained. Optional local JSON import is labelled a snapshot.
+
+edge-gui.service starts on reboot, binds only127.0.0.1:8765 and uses SSH forwarding
+for browser access. No public port, extra hosting bill or remote credential sharing
+needed. Installer copies GUI HTML and enables the service. Remote VPS still needs
+user pull/install and local tunnel commands from docs/GUI.md. No direct SSH agent
+access has been established.
+
+44 tests pass including HTTP/API, empty/malformed report, Host/path protection and
+read-only behavior. JS syntax, shell syntax and six systemd units pass. Browser
+visual QA unavailable; Sites helpers unavailable, so no hosted Site was registered
+or published. Existing VPS interface is the delivered GUI.
