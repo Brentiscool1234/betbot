@@ -5,7 +5,7 @@ from .provider import atomic_json
 
 
 class Budget:
-    def __init__(self,path,daily=60,monthly=1500,reserve_quota=100):
+    def __init__(self,path,daily=20,monthly=400,reserve_quota=100):
         self.path=Path(path); self.daily=daily; self.monthly=monthly; self.reserve_quota=reserve_quota
     def reserve(self,current,cost=1):
         state=json.loads(self.path.read_text()) if self.path.exists() else {}

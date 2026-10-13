@@ -17,3 +17,7 @@ purchase. Financial feasibility awaits actual hosting and licensed-statistics co
 
 Football-Data CSV ingestion rejected after current public restrictions review.
 Licensed result/statistics input and historical timestamp evidence remain required.
+
+2026-10-13: Owner chose a 20/month hosting + odds pilot budget. Default to sparse
+pilot cadence and 20/day, 400/month limits, with free odds tier recommended. This
+supersedes the earlier 60/day, 1500/month recommendation. Currency assumed EUR.

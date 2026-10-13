@@ -29,7 +29,7 @@ Football-Data automated/data-training restrictions prohibit the proposed CSV use
 no result CSV downloaded. The Odds API terms permit retention/research and forbid
 standalone redistribution. Keep raw archives private.
 
-Costs: prospective defaults 60 credits/day, 1,500/calendar month; 100-credit quota
+Costs: prospective defaults 20 credits/day, 400/calendar month; 100-credit quota
 reserve. Budget pauses intentionally reduce coverage. Public odds plan is USD
 30/month for 20k credits; actual account bill not verified. VPS EUR 5–10/month is
 an estimate. Licensed statistics cost and owner total budget remain unknown.
@@ -43,3 +43,10 @@ Model versions: none. Experiments: none. Financial edge: unproven.
 Next approved work: connect selected VPS, monitor one week of usage/coverage,
 obtain a licensed results/statistics sample and publication evidence, review full
 Phase 1 acceptance. Do not start ML/dashboard/wagering before the gate passes.
+
+## Low-cost pilot update
+Owner requested 20/month total hosting + odds; EUR assumed. Free 500-credit odds
+tier plus small VPS recommended. Defaults now 20 credits/day and 400/month; pilot
+cadence 6h normally, hourly within 6h. No paid subscription cancelled or host
+purchased. Owner must verify account renewal and free-tier eligibility. Existing
+historical archives remain reusable; no further historical downloads proposed.

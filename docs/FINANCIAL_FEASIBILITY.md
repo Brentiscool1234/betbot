@@ -1,5 +1,29 @@
 # Financial feasibility — 2026-10-13
 
+## Approved low-cost proof of concept
+
+Owner requested a total hosting + odds budget of 20/month; assume EUR pending
+currency confirmation. Use The Odds API free tier (500 credits/month) and a VPS
+with an all-in hosting/backup/tax quote below EUR 20; target EUR 5–10. No paid
+odds renewal, statistics purchase or host provisioning is authorized by this
+budget. Current account billing/renewal must be checked by the owner: free-tier
+collection does not itself cancel an existing subscription. Existing historical
+archives remain reusable without API calls; do not run new historical downloads
+on the free plan. Historical access may be lost after downgrading.
+
+Pilot cadence: every 6h normally, hourly within 6h of nearest kickoff. Cap at
+20 credits/day and 400/calendar month, preserving 100 provider credits. This
+is a sparse collection pilot; exact closing quotes and full horizon coverage
+are not promised. Other clients using this API key consume the same allowance.
+Calendar limits and provider renewal periods can differ; quota protection remains
+in place. Check provider pricing/eligibility before downgrading.
+
+The EUR 20 pilot tests ingestion, timestamp integrity, uptime and operating cost.
+It cannot establish profitability or complete result-based model research without
+a suitable licensed results/statistics source. The previous paid-plan estimate
+below is comparison context, not the chosen pilot cost.
+
+
 Recommendation: a bounded research pilot, one small VPS, UK region, EPL 1X2 only.
 Keep existing API subscription; do not add premium statistics, ML infrastructure
 or a dashboard until source coverage and data integrity justify the expense.
@@ -34,7 +58,7 @@ request used 1. Cached historical reruns incur no new API charge once complete.
 The historical command has a default bound of 20 requests / about 200 credits.
 Additional markets/regions and changed provider billing multiply costs.
 
-Prospective defaults: at most 60 reserved credits per UTC day and 1,500 per UTC
+Prospective defaults: at most 20 reserved credits per UTC day and 400 per UTC
 month, retaining a 100-credit provider reserve. Counters are persisted before
 requests; failures retain their reservation. Returned quota headers increase
 accounted usage if actual cost is larger. A provider unexpectedly charging more
@@ -49,10 +73,10 @@ ledgers; use exactly one collector directory on the chosen host.
 | Every hour | 720 |
 | Every 15 minutes | 2,880 |
 | Every 5 minutes | 8,640 |
-| Implemented adaptive polling | Fixture-dependent, capped at 1,500 accounted credits |
+| Implemented adaptive polling | Fixture-dependent, capped at 400 accounted credits |
 
-The watcher checks every minute but only makes a paid request when due. It uses
-6h normally, 1h within 24h of nearest kickoff, 15m within 6h and 5m within 1h.
+The watcher checks every minute but only makes a paid request when due. Pilot mode uses 6h normally and 1h within 6h of nearest kickoff. Research mode
+retains the former faster cadence, but is not the default for this budget.
 The day/month cap may deliberately stop a busy-day collection; health checks
 expose lost coverage. Do not describe capped coverage as complete. Tune limits
 only after a measured week of credit usage and fixture/quote coverage.

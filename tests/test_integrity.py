@@ -170,3 +170,9 @@ class OperationsTests(unittest.TestCase):
             with patch('edge.historical.fetch',side_effect=AssertionError('duplicate paid request')):
                 result=run(tmp,target=1,max_requests=1)
             self.assertEqual(result['t24_demonstrations'],1)
+
+class PilotCadenceTests(unittest.TestCase):
+    def test_pilot_spends_less_near_kickoff(self):
+        current=datetime.now(timezone.utc)
+        for seconds, expected in ((3600,3600),(21600,3600),(21601,21600),(86400,21600)):
+            self.assertEqual(cadence([{'commence_time':(current+timedelta(seconds=seconds)).isoformat()}],current,'pilot'),expected)

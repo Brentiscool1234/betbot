@@ -55,7 +55,7 @@ directory. Keep historical archives private in a separate research backup.
 
 ## Budget and quota
 
-Default limits are 60 credits/day and 1,500/month. Change service command limits
+Default limits are 20 credits/day and 400/month. Change service command limits
 only after owner budget approval. --force bypasses cadence, never budget limits.
 Failed requests retain their estimated charge. Unknown quota headers do not prove
 unlimited credits. Quota-reserve pauses persist for that UTC calendar month;
