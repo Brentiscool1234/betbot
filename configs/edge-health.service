@@ -1,0 +1,13 @@
+[Unit]
+Description=Check EDGE collection freshness and budget
+
+[Service]
+Type=oneshot
+User=edge
+Group=edge
+WorkingDirectory=/opt/edge
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 -m edge.health --directory /var/lib/edge/prospective
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
