@@ -139,7 +139,10 @@ def scan(directory='data/prospective',current=None):
                     body=frozen; body['display_note']='frozen paper decision; verify current price separately'
                 output.append(body)
             output.sort(key=lambda b:(b['fixture']['kickoff'],b['match_id']))
-            report={'status':'experimental_paper_tracker','as_of':as_of,'dataset_version':version,'matches':output,'summary':paper.summary()}
+            from .coverage import diagnose
+            coverage=diagnose(states,output,as_of)
+            atomic_json(directory/'coverage.json',coverage)
+            report={'coverage':coverage,'status':'experimental_paper_tracker','as_of':as_of,'dataset_version':version,'matches':output,'summary':paper.summary()}
             atomic_json(directory/'tracker.json',report)
             return report
         finally: store.close(); paper.close()

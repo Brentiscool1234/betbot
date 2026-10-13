@@ -173,3 +173,25 @@ pull/install and browser reload. Browser visual QA still unavailable here.
 Live end-to-end manual refresh verified: job completed, current odds and four
 recent results collected, latest CC0 revision checked with 778 cached results
 imported/replayed, and tracker recomputed. Existing budget/quota accounting used.
+
+## Automatic consistency and input-coverage report
+
+Owner requests consistently enough data and authorizes up to EUR35/month extra
+for a results/statistics source. Added daily latest-CC0 history service/timer,
+reboot persistence and bounded retries; history success/failure/staleness in health
+and GUI. Tracker writes coverage.json with venue/league deficits and latest known
+result ages; GUI lists missing venue samples. No rule weakening or cross-league
+score substitution. Existing odds/results schedules and budget caps unchanged.
+
+54 tests now pass (new history overlap, persistent success/failure and coverage
+checks). Live history update succeeded with 778 cached results, 16/20 ready.
+Hull needs2away/3home, Coventry2home/2away. No guarantee community files cover all
+played games or create historical EPL experience for promoted teams. Notifications
+and off-server backups remain unresolved. Remote user must pull/install.
+
+Paid candidates reviewed: API-Football Pro USD19/month, free restricted-season
+sample account, public terms do not grant third-party commercial rights; account
+sample, retention/use-rights and final <=EUR35 checkout total need verification.
+Sportmonks EUR29 before tax may exceed cap (e.g.35.09at21%VAT). No new provider
+connected, no account/trial/payment activated. Next: user-owned free provider
+account/sample, then reviewed adapter. See docs/CONSISTENT_DATA.md.

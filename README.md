@@ -70,3 +70,8 @@ The browser's **Refresh data** button fetches new odds/recent scores and updated
 CC0 result history before recomputing the tracker. It typically uses three credits
 from the existing odds allowance; existing caps and a five-minute cooldown apply.
 **Reload view** only refreshes the stored snapshot. No paper bet is forced.
+
+History now checks the latest CC0 snapshot automatically each day, with failure/
+staleness health checks and a per-match venue-history gap report in the GUI.
+See [continuous-data setup and paid-source comparison](docs/CONSISTENT_DATA.md).
+No additional paid statistics provider has been connected yet.

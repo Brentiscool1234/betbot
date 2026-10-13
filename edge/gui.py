@@ -17,7 +17,7 @@ def payload(directory):
     return {'report':read('tracker.json'),'collector':read('status.json'),'scores':read('scores-status.json'),
             'budget':read('budget.json'),'bootstrap':read('bootstrap-report.json'),
             'budget_status':read('budget-status.json'),'scores_budget_status':read('scores-budget-status.json'),
-            'refresh':read('data-refresh.json'),'connection':'vps','mode':'experimental_paper'}
+            'coverage':read('coverage.json'),'history':read('history-status.json'),'refresh':read('data-refresh.json'),'connection':'vps','mode':'experimental_paper'}
 
 
 def handler(directory,manager=None):

@@ -56,3 +56,10 @@ so no abandoned hosted Site registered. Browser visual checks remain unverified.
 Odds API and CC0 source only, async progress, shared credit limits, process locks,
 5min cooldown and CSRF/origin guard. Distinguish acquiring data from simply reloading
 the view. New data cannot change the 24h paper policy or retroactively edit decisions.
+
+2026-10-14: Owner sets additional data-provider budget <=EUR35/month. Finish
+automatic daily reviewed free-source upkeep and explicit coverage diagnosis now.
+Investigate API-Football USD19 Pro as a candidate rather than assuming Sportmonks
+EUR29+tax fits the cap. No paid account/credentials, checkout or provider rights
+are invented; sample/rights/cost verification precedes paid integration. Promoted
+teams can remain legitimately unsupported; no automatic lower-league substitution.

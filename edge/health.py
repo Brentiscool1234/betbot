@@ -29,6 +29,13 @@ def check(directory,current=None):
         scores_budget=directory/'scores-budget-status.json'
         if scores_budget.exists() and json.loads(scores_budget.read_text()).get('status')=='paused_budget':
             problems.append('results collection paused by budget')
+    if (directory/'history-enabled.json').exists():
+        history_path=directory/'history-status.json'
+        history=json.loads(history_path.read_text()) if history_path.exists() else {}
+        if history.get('status')=='failed': problems.append('automatic history update failed')
+        if not history.get('last_success'): problems.append('no successful automatic history update')
+        elif (current-datetime.fromisoformat(timestamp(history['last_success']))).total_seconds()>36*3600:
+            problems.append('automatic history update stale')
     if shutil.disk_usage(directory).free<200*1024*1024: problems.append('less than 200 MiB disk available')
     try:
         if int(status.get('quota',{}).get('remaining','1000'))<200: problems.append('provider credits below 200')
