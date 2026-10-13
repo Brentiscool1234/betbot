@@ -30,3 +30,14 @@ reliable and timestamped; missing fields remain explicitly missing.
 
 Gate 1 / full Phase 1 acceptance remains incomplete. Recovered odds alone are
 insufficient to claim results-based features or calibrated-model readiness.
+
+## Free forward-results bootstrap — superseding results sourcing advice
+
+2026-10-13: OpenFootball football.json repository declares CC0. Pinned snapshot
+and licence archived; 778 completed EPL results imported into the prospective
+store with actual receipt availability only. Cross-check aligned all 100 archived
+2024 fixture kickoff timestamps. Community coverage is partial and not guaranteed;
+no shots/xG or historical publication proof. This supports the experimental
+forward goals model, not backdated historical predictions or full Phase 1 acceptance.
+See RESULTS_BOOTSTRAP.md. Football-Data.co.uk CSV restrictions remain unchanged;
+no CSV from that source used. No paid subscription required for this bootstrap.

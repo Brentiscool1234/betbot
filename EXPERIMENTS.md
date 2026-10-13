@@ -19,3 +19,10 @@ candidate. Kickoff revisions void paper records. Synthetic tests prove technical
 behavior only. Prospectively collect 8–12 weeks after sufficient input history,
 then review sample size/calibration. No untouched historical test/lockbox defined
 for this prototype; no model-success claim.
+
+2026-10-13 model version poisson-venue-v2 adds event deduplication and conflict
+exclusion for the CC0 forward bootstrap. Frozen signal thresholds unchanged;
+no real-data forecasts settled or rule tuned. Input history now contains 778
+additional results available from receipt onward. Archive/source/code/version
+hashes remain part of each future prediction. Community coverage gaps and
+unvalidated/calibration limits remain. No historical backtest using backdated labels.

@@ -100,3 +100,14 @@ PAPER CANDIDATE = simulate only; expected value is a model estimate, not proven.
 
 Review calibration, chronological baseline comparison and 8–12 weeks of frozen
 paper evidence with adequate sample size before considering real-money use.
+
+## Free history bootstrap and model v2
+
+Use `python -m edge.bootstrap` in the same prospective directory to add reviewed
+CC0 EPL results as observed today. See RESULTS_BOOTSTRAP.md for VPS commands,
+source coverage and limitations. Local verification now supports model outputs for
+16 of 20 upcoming fixtures, while four remain insufficient. Earlier four-result
+minimum-data warnings describe the pre-bootstrap state, not the enriched dataset.
+Model poisson-venue-v2 deduplicates matching team/date events across source IDs
+and excludes conflicting scores. Model assumptions, paper thresholds and missing
+calibration remain unchanged. No before-receipt historical model inputs permitted.

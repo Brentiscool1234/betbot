@@ -98,3 +98,24 @@ decisions, settlement and kickoff-change voiding. Live local scan follows all 20
 upcoming events and correctly produces no predictions with only four results.
 Installer shell syntax and all five systemd unit checks pass. Paper evaluation
 records market-consensus Brier/log-loss alongside the model; no skill claimed.
+
+## Free results bootstrap
+
+Owner requested obtaining historical results and is open to a useful paid source.
+Found OpenFootball football.json CC0 dataset; no purchase/token required. Importer
+pins revision e6744429ee395bc86f247348c6184bb08d4eb361 and archives raw responses,
+licence/checksums and actual receipt. Adds 380+353+45=778 completed results from
+2024/25, 2025/26, partial 2026/27 to prospective dataset only; before-receipt
+historical predictions cannot access them. 100/100 historical fixture kickoff
+cross-checks agree after source London-time interpretation. No scores cross-audit
+or publication proof inferred from that match check.
+
+39 tests pass including source names/timezone, future-score rejection, ambiguous/
+invalid/duplicate protection, mapping, conflicts and model event deduplication.
+Repeated cached import yielded the same dataset version. Local enriched tracker
+has enough history for 16/20 upcoming fixtures, four insufficient. No paper
+candidates frozen yet (fixtures are outside the <=24h window). No profitability
+claim. The current source coverage is partial and lacks statistics/xG/squads.
+Model v2 adds cross-source event deduplication/conflict exclusion. User must pull,
+install and run bootstrap on VPS. No direct remote bootstrap has been performed.
+Source decision/report and exact commands: docs/RESULTS_BOOTSTRAP.md.

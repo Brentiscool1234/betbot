@@ -50,3 +50,11 @@ point-in-time history and fresh odds exist. Otherwise it reports insufficient
 data/no paper bet. Decisions are frozen and settled in a separate paper log.
 See [tracker setup and model assumptions](docs/PAPER_TRACKER.md). This is an
 unvalidated baseline, not a real-money betting recommendation.
+
+## Add free EPL result history
+
+`python -m edge.bootstrap` imports pinned CC0 OpenFootball results into the same
+prospective dataset, with availability set to actual receipt today. No token or
+subscription required. See [VPS import steps and data limits](docs/RESULTS_BOOTSTRAP.md).
+The enriched forward baseline can produce experimental probabilities when each
+team has enough history; calibration/profitability remain unproven.

@@ -1,8 +1,10 @@
 """Experimental independent-Poisson baseline; no validated profitability claim."""
 import math
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from .store import digest, timestamp
 
-MODEL_VERSION='poisson-venue-v1'
+MODEL_VERSION='poisson-venue-v2'
 CONFIG={'model_version':MODEL_VERSION,'min_league_matches':50,'min_team_venue_matches':5,'prior_matches':5,'team_window':20}
 
 
@@ -58,10 +60,22 @@ def predict(states,match_id,as_of,config=None):
         if p['competition_id']!='soccer_epl' or timestamp(p['kickoff'])>=min(cutoff,target_kickoff): continue
         if result['payload']['status']!='finished' or result['effective_at']<timestamp(p['kickoff']): continue
         history.append((timestamp(p['kickoff']),mid,f,result))
+    # Independent sources can refer to one match with different IDs.
+    grouped={}
+    for entry in history:
+        p=entry[2]['payload']
+        date=datetime.fromisoformat(entry[0]).astimezone(ZoneInfo('Europe/London')).date().isoformat()
+        grouped.setdefault((p['home_team'],p['away_team'],date),[]).append(entry)
+    history=[]; conflicts=0
+    for entries in grouped.values():
+        scores={(e[3]['payload']['home_goals'],e[3]['payload']['away_goals']) for e in entries}
+        if len(scores)>1:
+            conflicts+=1; continue
+        history.append(max(entries,key=lambda e:(e[3]['source']=='the-odds-api',e[3]['available_at'],e[1])))
     history.sort(reverse=True,key=lambda item:(item[0],item[1]))
     home_history=[x for x in history if x[2]['payload']['home_team']==target['home_team']][:config['team_window']]
     away_history=[x for x in history if x[2]['payload']['away_team']==target['away_team']][:config['team_window']]
-    counts={'league':len(history),'home_team_at_home':len(home_history),'away_team_away':len(away_history)}
+    counts={'conflicting_events_excluded':conflicts,'league':len(history),'home_team_at_home':len(home_history),'away_team_away':len(away_history)}
     if len(history)<config['min_league_matches'] or min(len(home_history),len(away_history))<config['min_team_venue_matches']:
         return {'status':'insufficient_data','reason':'not enough point-in-time league/team results','history_counts':counts}
     league_home=sum(x[3]['payload']['home_goals'] for x in history)/len(history)

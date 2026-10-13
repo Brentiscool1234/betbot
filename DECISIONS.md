@@ -38,3 +38,10 @@ Require 50 league results and five venue-specific results per team; shrink means
 with a five-match prior. Frozen exploratory rule is 5% estimated EV and 3pp edge,
 two fresh books, one simulated unit. These are unvalidated research assumptions.
 Store NO PAPER BET as well as candidate decisions, and immutable separate results.
+
+2026-10-13: Use CC0 OpenFootball pinned results to seed the forward paper Poisson
+baseline without another subscription. Store receipt availability today, never
+backdate. Explicit aliases/fixture matching, source archive/licence, conflict
+checks and model event deduplication prevent duplicates and silent source clashes.
+Paid statistics remain an optional separately priced data improvement; owner is
+open to it, but no trial/purchase is activated. Historical acceptance remains open.
