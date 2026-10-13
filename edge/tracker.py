@@ -131,6 +131,8 @@ def scan(directory='data/prospective',current=None):
                       'tracker_version':'tracker-v1','code_hash':code_hash(),'policy':POLICY,'policy_hash':digest(POLICY),
                       'model':model,'market':prices,'suggestion':pick}
                 hours=(datetime.fromisoformat(kickoff)-current).total_seconds()/3600
+                if hours>POLICY['prediction_window_hours'] and model['status']=='experimental_prediction':
+                    body['suggestion']={'status':'no_paper_bet','reason':'outside the 24-hour paper decision window'}
                 if hours<=POLICY['prediction_window_hours'] and model['status']=='experimental_prediction' and prices['status']=='available':
                     frozen=paper.freeze(body)
                     # Present the actual frozen decision/quote, never masquerade it as current.

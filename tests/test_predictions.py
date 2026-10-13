@@ -119,3 +119,18 @@ class AdditionalGuardTests(unittest.TestCase):
             summary=scan(tmp,current+timedelta(days=1))['summary']
             self.assertEqual(summary['void_predictions'],1); self.assertEqual(summary['settled_paper_bets'],0); self.assertEqual(summary['paper_profit_units'],0)
             store.close()
+
+class HorizonTests(unittest.TestCase):
+    def test_no_candidate_before_paper_window(self):
+        current=datetime(2026,1,1,tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as tmp:
+            rows=histories(current)+odds(current)
+            for row in rows:
+                if row['kind']=='fixture' and row['match_id']=='target':
+                    row['payload']=dict(row['payload'],kickoff=(current+timedelta(days=2)).isoformat())
+            store=Store(Path(tmp)/'edge.sqlite'); version=store.ingest(rows)
+            (Path(tmp)/'status.json').write_text(__import__('json').dumps({'dataset_version':version}))
+            report=scan(tmp,current)
+            self.assertEqual(report['matches'][0]['model']['status'],'experimental_prediction')
+            self.assertEqual(report['matches'][0]['suggestion']['status'],'no_paper_bet')
+            self.assertNotIn('prediction_id',report['matches'][0]); store.close()
