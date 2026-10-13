@@ -169,3 +169,7 @@ CSRF nonce, exact JSON action; browser never receives API credentials. Interrupt
 jobs recovered/reported. GUI shows progress/partial failures and next paper window.
 50 tests pass; JS syntax, shell and GUI unit checks pass. Remote VPS requires
 pull/install and browser reload. Browser visual QA still unavailable here.
+
+Live end-to-end manual refresh verified: job completed, current odds and four
+recent results collected, latest CC0 revision checked with 778 cached results
+imported/replayed, and tracker recomputed. Existing budget/quota accounting used.
