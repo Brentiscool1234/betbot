@@ -36,3 +36,13 @@ class DashboardTests(unittest.TestCase):
         (self.path/'tracker.json').unlink(); self.assertIsNone(payload(self.path)['report'])
         (self.path/'tracker.json').write_text('{bad')
         self.assertEqual(self.request('/api/dashboard')[0],503)
+
+    def test_head_matches_get_headers_without_response_body(self):
+        for path in ('/','/api/dashboard','/missing'):
+            status,headers,body=self.request(path)
+            head_status,head_headers,head_body=self.request(path,'HEAD')
+            self.assertEqual(head_status,status)
+            self.assertEqual(head_headers['Content-Type'],headers['Content-Type'])
+            self.assertEqual(int(head_headers['Content-Length']),len(body))
+            self.assertEqual(head_body,b'')
+        self.assertEqual(self.request('/','HEAD',headers={'Host':'evil.example'})[0],403)

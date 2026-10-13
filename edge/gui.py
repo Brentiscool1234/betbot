@@ -19,6 +19,8 @@ def payload(directory):
 
 def handler(directory):
     class Dashboard(BaseHTTPRequestHandler):
+        def do_HEAD(self):
+            self.do_GET()
         def do_GET(self):
             host=self.headers.get('Host','').split(':',1)[0].lower()
             if host not in ('127.0.0.1','localhost'):
@@ -37,7 +39,8 @@ def handler(directory):
             self.send_header('Cache-Control','no-store'); self.send_header('X-Content-Type-Options','nosniff')
             self.send_header('Referrer-Policy','no-referrer'); self.send_header('X-Frame-Options','DENY')
             self.send_header('Content-Security-Policy',"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'none'")
-            self.end_headers(); self.wfile.write(body)
+            self.end_headers()
+            if self.command != 'HEAD': self.wfile.write(body)
         def do_POST(self):
             self.send_error(405,'Read-only dashboard')
         def log_message(self,*args): pass

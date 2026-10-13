@@ -147,3 +147,8 @@ access has been established.
 read-only behavior. JS syntax, shell syntax and six systemd units pass. Browser
 visual QA unavailable; Sites helpers unavailable, so no hosted Site was registered
 or published. Existing VPS interface is the delivered GUI.
+
+GUI HEAD fix: user verified edge-gui.service active but curl -I returned501
+because HEAD was unimplemented. Added HEAD support matching GET headers without
+body, retaining Host/security checks. This diagnostic error does not establish
+that the browser GET or SSH tunnel failed. Focused GUI tests pass.
