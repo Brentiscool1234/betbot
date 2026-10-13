@@ -154,8 +154,10 @@ def render(report):
             lines.append('INSUFFICIENT DATA: '+model.get('reason','unknown')+' '+str(model.get('history_counts',{}))); continue
         p=model['probabilities']; lines.append(f"Model H/D/A: {p['home']:.1%} / {p['draw']:.1%} / {p['away']:.1%}")
         if pick['status']=='experimental_paper_candidate':
-            lines.append(f"PAPER CANDIDATE: {pick['selection']} @ {pick['decimal_odds']:.2f} ({pick['bookmaker']}); 1 simulated unit; model-estimated EV {pick['model_estimated_ev']:.1%}")
-        else: lines.append('NO PAPER BET: '+pick.get('reason','unavailable'))
+            outcome={'home':f["home_team"]+' to win','draw':'Draw','away':f["away_team"]+' to win'}[pick['selection']]
+            lines.append(f"PAPER BET: {outcome} | Estimated win probability: {pick['model_probability']:.1%} (uncalibrated) | Odds: {pick['decimal_odds']:.2f} at {pick['bookmaker']} | 1 simulated unit")
+            lines.append(f"Model-estimated EV: {pick['model_estimated_ev']:.1%}; probability is not confidence of profitability.")
+        else: lines.append('NO BET (paper): '+pick.get('reason','unavailable'))
         if 'prediction_id' in row: lines.append('Frozen at '+row['prediction_timestamp']+'; quote is not guaranteed current.')
     lines.append('\n'+json.dumps(report.get('summary',{})))
     return '\n'.join(lines)

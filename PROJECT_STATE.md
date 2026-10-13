@@ -122,3 +122,8 @@ Source decision/report and exact commands: docs/RESULTS_BOOTSTRAP.md.
 
 Final bootstrap/tracker validation: 40 tests pass; an additional horizon test
 prevents displaying paper candidates outside the frozen <=24h decision window.
+
+Tracker display update: paper selections now name the team/outcome, show the
+estimated outcome probability explicitly as uncalibrated, and retain quoted odds,
+bookmaker and one simulated unit. No-bet decisions show NO BET (paper). This is
+a presentation change; model probabilities and frozen decision rules unchanged.

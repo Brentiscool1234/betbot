@@ -111,3 +111,8 @@ minimum-data warnings describe the pre-bootstrap state, not the enriched dataset
 Model poisson-venue-v2 deduplicates matching team/date events across source IDs
 and excludes conflicting scores. Model assumptions, paper thresholds and missing
 calibration remain unchanged. No before-receipt historical model inputs permitted.
+
+Display format: PAPER BET: Team to win (or Draw) | Estimated win probability:
+65.0% (uncalibrated) | Odds: 2.10 at bookmaker | 1 simulated unit. The probability
+is an outcome estimate, not confidence that the bet is profitable. NO BET (paper)
+retains the reason. Display formatting does not change frozen decisions.
