@@ -119,3 +119,6 @@ claim. The current source coverage is partial and lacks statistics/xG/squads.
 Model v2 adds cross-source event deduplication/conflict exclusion. User must pull,
 install and run bootstrap on VPS. No direct remote bootstrap has been performed.
 Source decision/report and exact commands: docs/RESULTS_BOOTSTRAP.md.
+
+Final bootstrap/tracker validation: 40 tests pass; an additional horizon test
+prevents displaying paper candidates outside the frozen <=24h decision window.
