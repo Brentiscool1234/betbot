@@ -1,0 +1,27 @@
+[Unit]
+Description=EDGE EPL pre-match observation collector
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=edge
+Group=edge
+WorkingDirectory=/opt/edge
+EnvironmentFile=/etc/edge/collector.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 -u -m edge.collect --directory /var/lib/edge/prospective --watch --with-results --profile pilot --daily-limit 60 --monthly-limit 1500
+Restart=always
+RestartSec=60
+TimeoutStopSec=15
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/edge
+
+[Install]
+WantedBy=multi-user.target

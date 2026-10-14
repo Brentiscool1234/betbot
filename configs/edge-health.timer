@@ -1,0 +1,10 @@
+[Unit]
+Description=Check EDGE collector every five minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+Unit=edge-health.service
+
+[Install]
+WantedBy=timers.target

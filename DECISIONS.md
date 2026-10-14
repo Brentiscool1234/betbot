@@ -1,0 +1,79 @@
+# Decisions
+
+2026-10-13: Rebuild the missing uncommitted implementation from the original
+specification. GitHub and local checkout held only the initial README; no prior
+raw data was recoverable. New archives/dataset hashes supersede earlier chat claims.
+
+SQLite immutable content-addressed data; standard library only. Both provider
+availability and local-observation clocks are explicit. Stale weekly historical
+odds are a limited data demonstration, not exact research-horizon quotes.
+
+VPS/systemd recommended for persistent collection; GitHub Actions schedules lack
+the timing and local persistent disk desired near kickoff. No host purchased.
+
+Bound prospective credits at 60/day and 1,500/month with 100 reserve. Budget pauses
+produce coverage gaps rather than hidden spending. No API upgrade or automatic
+purchase. Financial feasibility awaits actual hosting and licensed-statistics cost.
+
+Football-Data CSV ingestion rejected after current public restrictions review.
+Licensed result/statistics input and historical timestamp evidence remain required.
+
+2026-10-13: Owner chose a 20/month hosting + odds pilot budget. Default to sparse
+pilot cadence and 20/day, 400/month limits, with free odds tier recommended. This
+supersedes the earlier 60/day, 1500/month recommendation. Currency assumed EUR.
+
+2026-10-13: Collect completed scores prospectively with the existing paid odds
+provider before buying statistics. Score receipt is availability, never kickoff;
+only completed=true events become final labels. Use same immutable dataset and
+budget lock as odds. Keep a three-day lookback and six-hour cadence. Shared caps
+60/day and 1500/month now fit the owner's confirmed paid 20k plan, superseding the
+free-tier cap. Historical stats/ML gate remains open; sample request prepared and
+no auto-billing trial activated.
+
+2026-10-13: Owner explicitly requests prediction formula and match-following tool.
+Implement an experimental Poisson venue baseline and terminal paper tracker now,
+superseding the earlier blanket model-development ban for this bounded scope.
+Gate 1 remains incomplete; no profitability, validated signal or real-money sizing.
+Require 50 league results and five venue-specific results per team; shrink means
+with a five-match prior. Frozen exploratory rule is 5% estimated EV and 3pp edge,
+two fresh books, one simulated unit. These are unvalidated research assumptions.
+Store NO PAPER BET as well as candidate decisions, and immutable separate results.
+
+2026-10-13: Use CC0 OpenFootball pinned results to seed the forward paper Poisson
+baseline without another subscription. Store receipt availability today, never
+backdate. Explicit aliases/fixture matching, source archive/licence, conflict
+checks and model event deduplication prevent duplicates and silent source clashes.
+Paid statistics remain an optional separately priced data improvement; owner is
+open to it, but no trial/purchase is activated. Historical acceptance remains open.
+
+2026-10-14: Run the requested GUI on the existing VPS and access it over a local
+SSH tunnel. No extra hosting budget, public unauthenticated server or data push
+secret is introduced. Dashboard is read-only with explicit current/snapshot/stale
+status. Sites instructions consulted; publishing helper unavailable in executor,
+so no abandoned hosted Site registered. Browser visual checks remain unverified.
+
+2026-10-14: Manual GUI data refresh is authorized by owner request. Use existing
+Odds API and CC0 source only, async progress, shared credit limits, process locks,
+5min cooldown and CSRF/origin guard. Distinguish acquiring data from simply reloading
+the view. New data cannot change the 24h paper policy or retroactively edit decisions.
+
+2026-10-14: Owner sets additional data-provider budget <=EUR35/month. Finish
+automatic daily reviewed free-source upkeep and explicit coverage diagnosis now.
+Investigate API-Football USD19 Pro as a candidate rather than assuming Sportmonks
+EUR29+tax fits the cap. No paid account/credentials, checkout or provider rights
+are invented; sample/rights/cost verification precedes paid integration. Promoted
+teams can remain legitimately unsupported; no automatic lower-league substitution.
+
+2026-10-14: Owner removes artificial 24-hour timing gate. Evaluate all future
+fixtures with adequate history/observed quotes. Keep value/data criteria; do not
+force signals. Show current assessment while preserving first paper candidate
+separately, with immutable no-bet assessments and a separate v2 policy cohort.
+Price receipt freshness is distinct from bookmaker last-update time; unchanged
+freshly confirmed quote is eligible. No real-money sizing/placement authorized.
+
+## 2026-10-14: experimental tracker integration
+
+Integrate the researched conservative market adjustment at owner request. Keep
+original Poisson in reasoning, separate paper-v3 cohort and previous records.
+Retain value thresholds and add positive EV across model scenarios. Total-team
+EPL history replaces venue minimum for this model only. No real-money promotion.

@@ -1,0 +1,22 @@
+[Unit]
+Description=Maintain EDGE public result history and coverage
+Wants=network-online.target
+After=network-online.target edge-collector.service
+StartLimitIntervalSec=3600
+StartLimitBurst=3
+
+[Service]
+Type=oneshot
+User=edge
+Group=edge
+WorkingDirectory=/opt/edge
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 -m edge.history --directory /var/lib/edge/prospective
+Restart=on-failure
+RestartSec=300
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/edge

@@ -1,0 +1,12 @@
+[Unit]
+Description=Update EDGE result history daily
+
+[Timer]
+OnBootSec=2min
+OnCalendar=*-*-* 04:00:00 UTC
+Persistent=true
+RandomizedDelaySec=300
+Unit=edge-history.service
+
+[Install]
+WantedBy=timers.target
