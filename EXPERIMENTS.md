@@ -116,3 +116,166 @@ Observed-only eligible results, fresh two-book consensus and original Poisson
 comparison are retained. Separate first-qualifying-selection paper-v3 cohort,
 with original price/model/hash frozen. Report selection bias in summary metrics.
 Retrospective improvements remain inconclusive; no profitable-model claim.
+
+## elo-winner-v1 registered 2026-10-14
+Owner requests winner predictor and Elo integration. Football-data E0 CSVs:
+2023/24 warmup, 2024/25 parameter selection, 2025/26 chronological audit.
+2025/26 results were previously inspected in earlier experiments: this is a
+retrospective audit, not a pristine lockbox. Never use target-match statistics.
+Fixed grid K={20,40}, home advantage={50,80}, Davidson draw parameter={.55,.75,1}.
+Blend Elo probabilities with existing pure-football forecast weights {0,.25,.5,1}.
+Choose minimum validation log loss, then freeze for audit; report accuracy,
+Brier/log loss and market baseline, approximate paired date-block intervals.
+No odds or test labels for fitting. No revenue claim or forced team winner when
+draw is most likely. Production learns only observed eligible past results.
+
+## video-inspired-forest-v1 registered 2026-10-14
+Transcript suggests Elo, prior form and tree ensembles. Football three-way
+classification differs from tennis two-way. Fixed RandomForest grid 200 trees,
+max_depth={3,6}, min_samples_leaf=20, random_state=20261014, temperature={.8,1,1.2}.
+Features: pre-match Elo probabilities/rating difference and prior 5/10-match
+points/goals for/goals against plus history depth. No target statistics, IDs or
+odds inputs. Fit 2023/24; select configuration on 2024/25; refit through 2024/25,
+audit 2025/26 once. Earlier Elo configuration already selected on 2024/25;
+validation is development evidence, not independent proof. All models compared
+on same fixtures. No RF production deployment without stronger evidence.
+
+### Elo and forest results
+
+{
+  "elo": {
+    "status": "retrospective audit, previously inspected outcomes; prospective reliability unverified",
+    "source_hashes": {
+      "E0 (3).csv": "b2e057b0ed959f198b0f63d2391c01239f3608e6de5db68edab3f88e04d07ff3",
+      "E0 (2).csv": "d0c8ce4a96d886cf60cf101f570f4a3893844226f91c7bd769eb568c49edbfa4",
+      "E0 (1).csv": "3e3a8352f9ada6789c508d6ca184424421fed56a30400904a4a327c583407e62"
+    },
+    "config": {
+      "k": 40,
+      "home_advantage": 50,
+      "draw_parameter": 0.75,
+      "blend_weight": 1
+    },
+    "validation_log_loss": 0.9953688926698301,
+    "test": {
+      "candidate": {
+        "matches": 380,
+        "accuracy": 0.48947368421052634,
+        "log_loss": 1.0239778871538305,
+        "brier": 0.6155179802920082
+      },
+      "football": {
+        "matches": 380,
+        "accuracy": 0.48157894736842105,
+        "log_loss": 1.0473659461047817,
+        "brier": 0.6292129322635722
+      },
+      "elo": {
+        "matches": 380,
+        "accuracy": 0.48947368421052634,
+        "log_loss": 1.0239778871538305,
+        "brier": 0.6155179802920082
+      },
+      "market": {
+        "matches": 380,
+        "accuracy": 0.49473684210526314,
+        "log_loss": 1.0152523829672504,
+        "brier": 0.610024736352888
+      }
+    },
+    "candidate_minus_football_logloss_approx95_interval": [
+      -0.051814112327840944,
+      0.004145308966977401
+    ],
+    "historical_publication": "assumed by calendar ordering; exact availability not verified",
+    "rank_scope": "Premier League only; lower-division strength not calibrated",
+    "grid_attempts": 48
+  },
+  "forest": {
+    "status": "retrospective exploratory audit, previously inspected outcomes",
+    "source_hashes": {
+      "E0 (3).csv": "b2e057b0ed959f198b0f63d2391c01239f3608e6de5db68edab3f88e04d07ff3",
+      "E0 (2).csv": "d0c8ce4a96d886cf60cf101f570f4a3893844226f91c7bd769eb568c49edbfa4",
+      "E0 (1).csv": "3e3a8352f9ada6789c508d6ca184424421fed56a30400904a4a327c583407e62"
+    },
+    "sklearn_version": "1.8.0",
+    "selected_depth": 3,
+    "temperature": 1.2,
+    "validation_log_loss": 1.0083538292373118,
+    "test": {
+      "forest": {
+        "matches": 380,
+        "accuracy": 0.4921052631578947,
+        "log_loss": 1.0300930688191527,
+        "brier": 0.618443864447205
+      },
+      "elo": {
+        "matches": 380,
+        "accuracy": 0.48947368421052634,
+        "log_loss": 1.0239778871538305,
+        "brier": 0.6155179802920082
+      },
+      "market": {
+        "matches": 380,
+        "accuracy": 0.49473684210526314,
+        "log_loss": 1.0152523829672504,
+        "brier": 0.610024736352888
+      }
+    },
+    "features": [
+      "elo_home",
+      "elo_draw",
+      "elo_away",
+      "elo_rating_difference",
+      "home_5_count",
+      "home_5_points",
+      "home_5_goals_for",
+      "home_5_goals_against",
+      "away_5_count",
+      "away_5_points",
+      "away_5_goals_for",
+      "away_5_goals_against",
+      "home_10_count",
+      "home_10_points",
+      "home_10_goals_for",
+      "home_10_goals_against",
+      "away_10_count",
+      "away_10_points",
+      "away_10_goals_for",
+      "away_10_goals_against"
+    ],
+    "attempts": [
+      [
+        1.0309587723624125,
+        3,
+        0.8
+      ],
+      [
+        1.012506956213762,
+        3,
+        1
+      ],
+      [
+        1.0083538292373118,
+        3,
+        1.2
+      ],
+      [
+        1.0337891083935684,
+        6,
+        0.8
+      ],
+      [
+        1.0135987448322141,
+        6,
+        1
+      ],
+      [
+        1.0084701887196417,
+        6,
+        1.2
+      ]
+    ],
+    "publication": "assumed calendar ordering, not verified PIT"
+  }
+}

@@ -88,3 +88,14 @@ not verified historical point-in-time or profitability evidence.
 Current experimental tracker: market-dynamic-v1, with original Poisson comparison
 in GUI reasoning and a separate paper-v3 cohort. See docs/MODEL_RESEARCH.md and
 docs/PAPER_TRACKER.md. Research has not established a profitable betting edge.
+
+## Elo winner integration — 2026-10-14
+
+Visible outcome prediction now uses elo-winner-v1, with Elo ratings, historical
+EPL pool ranks and prior-five-match form in reasoning. Separate Elo accuracy and
+$10 simulation cohorts retain previous-model records. Market-adjusted value checks
+remain separate. CSV importer accepts E0 only, actual receipt timestamps, no
+backdating; local four-file import contains 1200 scores without conflicts.
+Audit: Elo 48.9% vs football 48.2% vs market 49.5% on 380 fixtures. RF 49.2% but
+worse probability scores, research only. No proven reliability/financial edge.
+See docs/ELO_WINNER.md for formulas, validation limits and deployment/import steps.

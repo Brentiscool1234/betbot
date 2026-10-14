@@ -169,3 +169,14 @@ fixed $10 simulation, even below value thresholds. Original value-filtered
 paper-v3 decisions remain separate. First accuracy forecast and first priced
 simulation may differ; both retain timestamps. Rescheduled fixtures are void.
 No real wagers are placed; estimated probabilities remain unvalidated.
+
+## Elo winner integration — 2026-10-14
+
+Visible outcome prediction now uses elo-winner-v1, with Elo ratings, historical
+EPL pool ranks and prior-five-match form in reasoning. Separate Elo accuracy and
+$10 simulation cohorts retain previous-model records. Market-adjusted value checks
+remain separate. CSV importer accepts E0 only, actual receipt timestamps, no
+backdating; local four-file import contains 1200 scores without conflicts.
+Audit: Elo 48.9% vs football 48.2% vs market 49.5% on 380 fixtures. RF 49.2% but
+worse probability scores, research only. No proven reliability/financial edge.
+See docs/ELO_WINNER.md for formulas, validation limits and deployment/import steps.

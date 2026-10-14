@@ -1,0 +1,13 @@
+{
+  "k": 40,
+  "home_advantage": 50,
+  "draw_parameter": 0.75,
+  "blend_weight": 1,
+  "version": "elo-winner-v1",
+  "validation_source_hashes": {
+    "E0 (3).csv": "b2e057b0ed959f198b0f63d2391c01239f3608e6de5db68edab3f88e04d07ff3",
+    "E0 (2).csv": "d0c8ce4a96d886cf60cf101f570f4a3893844226f91c7bd769eb568c49edbfa4",
+    "E0 (1).csv": "3e3a8352f9ada6789c508d6ca184424421fed56a30400904a4a327c583407e62"
+  },
+  "validation_status": "retrospective audit; reliability unverified"
+}

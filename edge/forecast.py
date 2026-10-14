@@ -4,6 +4,9 @@ from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from .store import timestamp,digest
+from .elo import Elo,blend
+from .form import Form
+ELO_CONFIG=json.loads(Path(__file__).with_name("elo_config.json").read_text())
 from .research.dynamic import Dynamic,temperature,residual_proposal,SIDES
 
 CONFIG=json.loads(Path(__file__).with_name('research').joinpath('live_config.json').read_text())
@@ -26,11 +29,13 @@ def prepare(states,as_of):
         if len({(e[3]['payload']['home_goals'],e[3]['payload']['away_goals']) for e in entries})>1:
             conflicts+=1; continue
         history.append(max(entries,key=lambda e:(e[3]['source']=='the-odds-api',e[3]['available_at'],e[1])))
-    history.sort(key=lambda e:(e[0],e[1])); models=[Dynamic(**c) for c in CONFIG['adaptation_configs']]
+    history.sort(key=lambda e:(e[0],e[1])); form=Form(); elo=Elo(**{k:ELO_CONFIG[k] for k in ('k','home_advantage','draw_parameter')}); models=[Dynamic(**c) for c in CONFIG['adaptation_configs']]
     for kickoff,mid,f,score in history:
         day=datetime.fromisoformat(kickoff).astimezone(ZoneInfo('Europe/London')).date().isoformat()
+        form.observe(f['payload']['home_team'],f['payload']['away_team'],score['payload']['home_goals'],score['payload']['away_goals'])
+        elo.observe(f['payload']['home_team'],f['payload']['away_team'],score['payload']['home_goals'],score['payload']['away_goals'])
         for model in models: model.observe(f['payload']['home_team'],f['payload']['away_team'],day,score['payload']['home_goals'],score['payload']['away_goals'])
-    return {'models':models,'history':history,'conflicts':conflicts,'as_of':cutoff}
+    return {'form':form,'elo':elo,'models':models,'history':history,'conflicts':conflicts,'as_of':cutoff}
 
 
 def predict(states,match_id,as_of,prices,context=None):
@@ -56,6 +61,8 @@ def predict(states,match_id,as_of,prices,context=None):
             'lambda_away':sum(w*p['lambda_away'] for w,p in zip(CONFIG['weights'],forecasts)),
             'source_records':sorted({digest(r) for e in h for r in e[2:]}),'fixture_record':digest(fixture),
             'probability_basis':'market_adjusted' if prices['status']=='available' else 'football_only_missing_market','market_anchor_available':prices['status']=='available','validation_status':'experimental; prospective accuracy unverified'}
+    elo=context['elo'].forecast(f['home_team'],f['away_team'])
+    output.update(recent_form={'home':context['form'].summary(f['home_team']),'away':context['form'].summary(f['away_team'])},elo=elo,winner_probabilities=blend(football,elo['probabilities'],ELO_CONFIG['blend_weight']),winner_model_version=ELO_CONFIG['version'],winner_config_hash=digest(ELO_CONFIG),elo_config=ELO_CONFIG)
     if prices['status']=='available':
         proposal=residual_proposal(prices['consensus'],members,CONFIG['weights'],min(home,away),{k:p['decimal_odds'] for k,p in prices['best_prices'].items()})
         output.update(probabilities=proposal['probabilities'],market_residual_weight=proposal['market_residual_weight'],

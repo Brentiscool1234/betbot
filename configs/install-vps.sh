@@ -27,6 +27,7 @@ install -m 644 "$EDGE_SOURCE_DIR"/edge/*.py /opt/edge/edge/
 install -d -m 755 /opt/edge/edge/research
 install -m 644 "$EDGE_SOURCE_DIR"/edge/research/*.py /opt/edge/edge/research/
 install -m 644 "$EDGE_SOURCE_DIR"/edge/research/live_config.json /opt/edge/edge/research/live_config.json
+install -m 644 "$EDGE_SOURCE_DIR"/edge/elo_config.json /opt/edge/edge/elo_config.json
 install -m 644 "$EDGE_SOURCE_DIR"/edge/gui.html /opt/edge/edge/gui.html
 install -d -o edge -g edge -m 700 /var/lib/edge /var/lib/edge/prospective
 for unit in edge-collector.service edge-health.service edge-health.timer edge-tracker.service edge-tracker.timer edge-gui.service edge-history.service edge-history.timer; do

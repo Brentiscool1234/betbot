@@ -14,7 +14,7 @@ from .poisson import predict as baseline_predict,states_at
 from .forecast import predict,prepare
 
 def code_hash():
-    return digest({name:hashlib.sha256(Path(__file__).parent.joinpath(name).read_bytes()).hexdigest() for name in ('tracker.py','poisson.py','store.py','forecast.py','research/dynamic.py','research/live_config.json')})
+    return digest({name:hashlib.sha256(Path(__file__).parent.joinpath(name).read_bytes()).hexdigest() for name in ('tracker.py','poisson.py','store.py','forecast.py','elo.py','form.py','elo_config.json','research/dynamic.py','research/live_config.json')})
 
 
 POLICY={'version':'paper-rule-v3-market-dynamic','minimum_model_ev':0.05,'minimum_edge':0.03,
@@ -63,9 +63,9 @@ def suggestion(model,prices):
 def outcome_prediction(model, prices):
     if model['status'] != 'experimental_prediction':
         return {'status': 'insufficient_data', 'reason': model.get('reason')}
-    probabilities = model['probabilities']
+    probabilities = model.get('winner_probabilities',model['probabilities'])
     selection = max(('home', 'draw', 'away'), key=lambda k: probabilities[k])
-    result = {'status': 'prediction', 'selection': selection,
+    result = {'status': 'prediction', 'selection': selection, 'model_version':model.get('winner_model_version',model.get('model_version')),
               'model_probability': probabilities[selection], 'stake_dollars': 10,
               'simulation_status': 'waiting_for_fresh_odds'}
     if prices['status'] == 'available':
@@ -144,12 +144,12 @@ def scan(directory='data/prospective',current=None):
         except BlockingIOError: return {'status':'locked','matches':[]}
         status=json.loads((directory/'status.json').read_text()); version=status['dataset_version']
         store=Store(directory/'edge.sqlite'); paper=PaperLog(directory/PAPER_FILENAME)
-        forecasts=PaperLog(directory/'forecasts-v1.sqlite'); simulations=PaperLog(directory/'simulations-v1.sqlite')
+        forecasts=PaperLog(directory/'forecasts-v2-elo.sqlite'); simulations=PaperLog(directory/'simulations-v2-elo.sqlite')
         try:
             states=states_at(store.records(version),as_of); output=[]
             paper.settle(states,as_of); forecasts.settle(states,as_of); simulations.settle(states,as_of)
             previous_policy_summaries=[]
-            for filename in ('paper.sqlite','paper-v2.sqlite'):
+            for filename in ('paper.sqlite','paper-v2.sqlite','forecasts-v1.sqlite','simulations-v1.sqlite'):
                 if (directory/filename).exists():
                     legacy=PaperLog(directory/filename)
                     try:
@@ -171,11 +171,12 @@ def scan(directory='data/prospective',current=None):
                 prediction=outcome_prediction(model,prices)
                 body['outcome_prediction']=prediction
                 if prediction['status']=='prediction':
-                    forecast_body=dict(body,suggestion={'status':'accuracy_only'})
+                    winner_model=dict(model,probabilities=model.get('winner_probabilities',model['probabilities']),model_version=model.get('winner_model_version',model.get('model_version')),probability_basis='football_elo')
+                    forecast_body=dict(body,model=winner_model,suggestion={'status':'accuracy_only'})
                     frozen_forecast=forecasts.freeze(forecast_body)
                     body['recorded_prediction']={'prediction_timestamp':frozen_forecast['prediction_timestamp'], **frozen_forecast['outcome_prediction']}
                     if prediction['simulation_status']=='ready':
-                        simulated=simulations.freeze(dict(body,suggestion=prediction))
+                        simulated=simulations.freeze(dict(body,model=winner_model,suggestion=prediction))
                         body['simulated_bet']={'prediction_timestamp':simulated['prediction_timestamp'], **simulated['suggestion']}
                     else:
                         simulated=simulations.frozen(mid)
@@ -209,6 +210,10 @@ def render(report):
         lines.append(f"\n{f['home_team']} vs {f['away_team']} | kickoff {f['kickoff']}")
         if model['status']!='experimental_prediction':
             lines.append('INSUFFICIENT DATA: '+model.get('reason','unknown')+' '+str(model.get('history_counts',{}))); continue
+        prediction=row.get('outcome_prediction',{})
+        if prediction.get('selection'):
+            label={'home':f['home_team']+' to win','draw':'Draw','away':f['away_team']+' to win'}[prediction['selection']]
+            lines.append(f"PREDICTED OUTCOME: {label} | {prediction['model_probability']:.1%} estimated probability | {prediction.get('model_version','experimental')}")
         p=model['probabilities']; lines.append(f"Model H/D/A: {p['home']:.1%} / {p['draw']:.1%} / {p['away']:.1%}")
         if pick['status']=='experimental_paper_candidate':
             outcome={'home':f["home_team"]+' to win','draw':'Draw','away':f["away_team"]+' to win'}[pick['selection']]
