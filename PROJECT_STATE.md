@@ -215,3 +215,7 @@ paper candidates, not real-money stakes or confidence of profit.
 57 tests pass including early candidates, no-bet to candidate, changed prices
 without frozen overwrite and quote receipt/change distinction. Owner policy change
 registered before live v2 acquisition. VPS requires usual pull/install/reload.
+
+Live v2 acquisition completed successfully: 12 experimental paper candidates,
+4 insufficient-history fixtures and 4 no-value decisions. No timing-gate decisions
+remain. This verifies behavior only, not accuracy/calibration/profitability.
