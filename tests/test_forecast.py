@@ -42,7 +42,7 @@ class ForecastIntegrationTests(unittest.TestCase):
             store=Store(root/'edge.sqlite'); version=store.ingest(histories(current)+odds(current)); (root/'status.json').write_text(json.dumps({'dataset_version':version}))
             report=scan(root,current)
             self.assertEqual(report['matches'][0]['model']['model_version'],MODEL_VERSION)
-            self.assertIn('baseline_model',report['matches'][0]); self.assertTrue((root/PAPER_FILENAME).exists())
+            self.assertIn('outcome_prediction',report['matches'][0]); self.assertEqual(report['prediction_summary']['logged_predictions'],1); self.assertEqual(report['simulation_summary']['logged_predictions'],1); self.assertIn('baseline_model',report['matches'][0]); self.assertTrue((root/PAPER_FILENAME).exists())
             self.assertEqual(len(report['previous_policy_summaries']),1)
             old=PaperLog(root/'paper-v2.sqlite'); self.assertEqual(old.db.execute('SELECT count(*) FROM predictions').fetchone()[0],0)
             old.close(); store.close()

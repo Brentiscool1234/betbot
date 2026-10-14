@@ -278,3 +278,15 @@ qualifying selections only, not an unbiased all-fixture validation sample.
 Installer deploys research package and frozen configuration. 68 tests passed;
 JavaScript, shell and systemd syntax checks passed. Local scan evaluated 20
 fixtures with new model; none qualified. VPS deployment still requires pull/install.
+
+## All-match prediction tracking — 2026-10-14
+
+Every eligible model forecast now shows its most likely home/draw/away outcome,
+independently of bet-value thresholds. First available prediction per match is
+immutable in forecasts-v1.sqlite, including forecasts without odds. Accuracy
+and probability scores settle from subsequently observed results. First forecast
+with fresh eligible odds is separately frozen in simulations-v1.sqlite for a
+fixed $10 simulation, even below value thresholds. Original value-filtered
+paper-v3 decisions remain separate. First accuracy forecast and first priced
+simulation may differ; both retain timestamps. Rescheduled fixtures are void.
+No real wagers are placed; estimated probabilities remain unvalidated.

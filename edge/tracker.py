@@ -60,6 +60,20 @@ def suggestion(model,prices):
     return {'status':'experimental_paper_candidate','stake_units':1,'reason':'unvalidated model; paper simulation only',**best}
 
 
+def outcome_prediction(model, prices):
+    if model['status'] != 'experimental_prediction':
+        return {'status': 'insufficient_data', 'reason': model.get('reason')}
+    probabilities = model['probabilities']
+    selection = max(('home', 'draw', 'away'), key=lambda k: probabilities[k])
+    result = {'status': 'prediction', 'selection': selection,
+              'model_probability': probabilities[selection], 'stake_dollars': 10,
+              'simulation_status': 'waiting_for_fresh_odds'}
+    if prices['status'] == 'available':
+        result.update(prices['best_prices'][selection])
+        result.update(simulation_status='ready', model_estimated_ev=probabilities[selection]*result['decimal_odds']-1)
+    return result
+
+
 PAPER_FILENAME='paper-v3.sqlite'
 
 
@@ -99,24 +113,25 @@ class PaperLog:
             probabilities=prediction['model']['probabilities']; pick=prediction['suggestion']
             pnl=pick['decimal_odds']-1 if pick.get('selection')==outcome else -1 if pick.get('selection') else 0
             if rescheduled: pnl=0
-            consensus=prediction['market']['consensus']
-            market_brier=sum((p-(1 if k==outcome else 0))**2 for k,p in consensus.items())
-            market_log_loss=-math.log(max(consensus[outcome],1e-15))
+            consensus=prediction['market'].get('consensus')
+            market_brier=sum((p-(1 if k==outcome else 0))**2 for k,p in consensus.items()) if consensus else None
+            market_log_loss=-math.log(max(consensus[outcome],1e-15)) if consensus else None
             settlement={'market_brier':market_brier,'market_log_loss':market_log_loss,'void_rescheduled':rescheduled,'prediction_id':pid,'settled_at':timestamp(as_of),'result_record':digest(result),'outcome':outcome,
-                        'paper_profit_units':pnl,'brier':sum((p-(1 if k==outcome else 0))**2 for k,p in probabilities.items()),
+                        'correct':prediction.get('outcome_prediction',pick).get('selection')==outcome,'paper_profit_dollars':10*pnl,'paper_profit_units':pnl,'brier':sum((p-(1 if k==outcome else 0))**2 for k,p in probabilities.items()),
                         'log_loss':-math.log(max(probabilities[outcome],1e-15))}
             with self.db: self.db.execute('INSERT OR IGNORE INTO settlements VALUES (?,?)',(pid,canonical(settlement)))
     def summary(self):
         settlements=[json.loads(row[0]) for row in self.db.execute('SELECT body FROM settlements')]
         valid=[s for s in settlements if not s.get('void_rescheduled')]
+        compared=[s for s in valid if s.get('market_brier') is not None]
         picks=self.db.execute("SELECT body FROM predictions").fetchall()
         candidate_ids={json.loads(row[0])['prediction_id'] for row in picks if json.loads(row[0])['suggestion'].get('selection')}
         settled_bets=sum(s['prediction_id'] in candidate_ids for s in valid)
-        return {'settled_predictions':len(valid),'void_predictions':len(settlements)-len(valid),'settled_paper_bets':settled_bets,'paper_roi':sum(s['paper_profit_units'] for s in valid)/settled_bets if settled_bets else None,'paper_profit_units':sum(s['paper_profit_units'] for s in settlements),
+        return {'correct_predictions':sum(s.get('correct',False) for s in valid),'prediction_accuracy':sum(s.get('correct',False) for s in valid)/len(valid) if valid else None,'paper_profit_dollars':10*sum(s['paper_profit_units'] for s in settlements),'logged_predictions':len(picks),'settled_predictions':len(valid),'void_predictions':len(settlements)-len(valid),'settled_paper_bets':settled_bets,'paper_roi':sum(s['paper_profit_units'] for s in valid)/settled_bets if settled_bets else None,'paper_profit_units':sum(s['paper_profit_units'] for s in settlements),
                 'mean_brier':sum(s['brier'] for s in valid)/len(valid) if valid else None,
-                'mean_market_brier':sum(s['market_brier'] for s in valid)/len(valid) if valid else None,
-                'mean_market_log_loss':sum(s['market_log_loss'] for s in valid)/len(valid) if valid else None,
-                'mean_model_minus_market_brier':sum(s['brier']-s['market_brier'] for s in valid)/len(valid) if valid else None,
+                'mean_market_brier':sum(s['market_brier'] for s in compared)/len(compared) if compared else None,
+                'mean_market_log_loss':sum(s['market_log_loss'] for s in compared)/len(compared) if compared else None,
+                'mean_model_minus_market_brier':sum(s['brier']-s['market_brier'] for s in compared)/len(compared) if compared else None,
                 'mean_log_loss':sum(s['log_loss'] for s in valid)/len(valid) if valid else None,
                 'cohort':'first qualifying paper bet per match under paper-rule-v3-market-dynamic; older cohorts separate','warning':'experimental paper results; no evidence of profitability'}
 
@@ -129,9 +144,10 @@ def scan(directory='data/prospective',current=None):
         except BlockingIOError: return {'status':'locked','matches':[]}
         status=json.loads((directory/'status.json').read_text()); version=status['dataset_version']
         store=Store(directory/'edge.sqlite'); paper=PaperLog(directory/PAPER_FILENAME)
+        forecasts=PaperLog(directory/'forecasts-v1.sqlite'); simulations=PaperLog(directory/'simulations-v1.sqlite')
         try:
             states=states_at(store.records(version),as_of); output=[]
-            paper.settle(states,as_of)
+            paper.settle(states,as_of); forecasts.settle(states,as_of); simulations.settle(states,as_of)
             previous_policy_summaries=[]
             for filename in ('paper.sqlite','paper-v2.sqlite'):
                 if (directory/filename).exists():
@@ -152,6 +168,18 @@ def scan(directory='data/prospective',current=None):
                 body={'match_id':mid,'fixture':f,'prediction_timestamp':as_of,'dataset_version':version,
                       'tracker_version':'tracker-v3','code_hash':code_hash(),'policy':POLICY,'policy_hash':digest(POLICY),
                       'baseline_model':baseline,'model':model,'market':prices,'suggestion':pick}
+                prediction=outcome_prediction(model,prices)
+                body['outcome_prediction']=prediction
+                if prediction['status']=='prediction':
+                    forecast_body=dict(body,suggestion={'status':'accuracy_only'})
+                    frozen_forecast=forecasts.freeze(forecast_body)
+                    body['recorded_prediction']={'prediction_timestamp':frozen_forecast['prediction_timestamp'], **frozen_forecast['outcome_prediction']}
+                    if prediction['simulation_status']=='ready':
+                        simulated=simulations.freeze(dict(body,suggestion=prediction))
+                        body['simulated_bet']={'prediction_timestamp':simulated['prediction_timestamp'], **simulated['suggestion']}
+                    else:
+                        simulated=simulations.frozen(mid)
+                        if simulated: body['simulated_bet']={'prediction_timestamp':simulated['prediction_timestamp'], **simulated['suggestion']}
                 paper.assess(body)
                 if pick['status']=='experimental_paper_candidate':
                     paper.freeze(body)  # first qualifying candidate; never replace its recorded price
@@ -166,10 +194,12 @@ def scan(directory='data/prospective',current=None):
             from .coverage import diagnose
             coverage=diagnose(states,output,as_of)
             atomic_json(directory/'coverage.json',coverage)
-            report={'previous_policy_summaries':previous_policy_summaries,'coverage':coverage,'status':'experimental_paper_tracker','as_of':as_of,'dataset_version':version,'matches':output,'summary':paper.summary()}
+            forecast_summary=forecasts.summary(); forecast_summary['cohort']='first available prediction per match, regardless of value or odds'
+            simulation_summary=simulations.summary(); simulation_summary['cohort']='first prediction with eligible fresh odds; fixed $10 simulation regardless of value'
+            report={'prediction_summary':forecast_summary,'simulation_summary':simulation_summary,'previous_policy_summaries':previous_policy_summaries,'coverage':coverage,'status':'experimental_paper_tracker','as_of':as_of,'dataset_version':version,'matches':output,'summary':paper.summary()}
             atomic_json(directory/'tracker.json',report)
             return report
-        finally: store.close(); paper.close()
+        finally: store.close(); paper.close(); forecasts.close(); simulations.close()
 
 
 def render(report):

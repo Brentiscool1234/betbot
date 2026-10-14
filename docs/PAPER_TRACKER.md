@@ -157,3 +157,15 @@ Old Poisson probabilities remain under View reasoning. A candidate requires
 EV in each model scenario. Scenario agreement does not establish confidence.
 New decisions use paper-v3.sqlite; prior cohorts remain separate. No-bet is a
 valid result. Qualifying-selection summaries do not validate all-fixture accuracy.
+
+## All-match prediction tracking — 2026-10-14
+
+Every eligible model forecast now shows its most likely home/draw/away outcome,
+independently of bet-value thresholds. First available prediction per match is
+immutable in forecasts-v1.sqlite, including forecasts without odds. Accuracy
+and probability scores settle from subsequently observed results. First forecast
+with fresh eligible odds is separately frozen in simulations-v1.sqlite for a
+fixed $10 simulation, even below value thresholds. Original value-filtered
+paper-v3 decisions remain separate. First accuracy forecast and first priced
+simulation may differ; both retain timestamps. Rescheduled fixtures are void.
+No real wagers are placed; estimated probabilities remain unvalidated.
