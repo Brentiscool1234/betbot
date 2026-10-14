@@ -257,3 +257,7 @@ Proposal improvement tiny .002657; approximate95%paired date-block interval
 7.07–415.07h; sample incomplete/inspected. Cached replay0calls; charges130retained.
 Active model not replaced. Content-addressed experiment reports and all failures
 preserved. Six research tests now pass incl bounded research request protection.
+
+Final research verification: 63 total tests pass; comparison/market cached replays
+reproduce scores with zero new API calls, research charged/reserved130credits.
+Source/code/parent-report hashes and content-addressed versions retained.
