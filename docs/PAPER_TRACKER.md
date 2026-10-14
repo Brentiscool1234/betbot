@@ -144,3 +144,16 @@ returned separately, never blended into v2. Include both logs in private backups
 This owner-directed timing policy change is registered before v2 live acquisition.
 No recalibration or tuning based on outcomes has been performed, and no calibrated
 confidence/profitability or real-money recommendation is claimed.
+
+## Current experimental model (v3)
+
+The tracker now uses market-dynamic-v1; the frozen configuration lives in
+edge/research/live_config.json. See MODEL_RESEARCH.md for formula and evidence.
+Probabilities combine three dynamic opponent models with fresh market consensus.
+Requires 50 observed league results and five prior EPL results per team across
+venues. Missing market data displays a football estimate but cannot qualify.
+Old Poisson probabilities remain under View reasoning. A candidate requires
+5% estimated EV, three percentage points over consensus and positive estimated
+EV in each model scenario. Scenario agreement does not establish confidence.
+New decisions use paper-v3.sqlite; prior cohorts remain separate. No-bet is a
+valid result. Qualifying-selection summaries do not validate all-fixture accuracy.

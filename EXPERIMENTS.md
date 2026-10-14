@@ -107,3 +107,12 @@ Horizon7.07–415.07h, maximum sampled update-age.089h. No ROI/CLV/execution cla
 Historical result publication is an assumption, not evidence; exploratory study
 only. Fixed hypothesis retained, no tuning on these outcomes. Raw archives,
 source hashes, charge ledger and content-addressed reports kept privately.
+
+### prospective-market-dynamic-v1 — experimental deployment
+
+Owner authorized prospective integration on 2026-10-14. Freeze live_config.json
+settings from the prior registered research; no tuning on prospective outcomes.
+Observed-only eligible results, fresh two-book consensus and original Poisson
+comparison are retained. Separate first-qualifying-selection paper-v3 cohort,
+with original price/model/hash frozen. Report selection bias in summary metrics.
+Retrospective improvements remain inconclusive; no profitable-model claim.

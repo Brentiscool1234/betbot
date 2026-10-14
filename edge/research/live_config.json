@@ -1,0 +1,32 @@
+{
+  "version": "market-dynamic-v1",
+  "adaptation_configs": [
+    {
+      "half_life": 365,
+      "learning_rate": 0.01
+    },
+    {
+      "half_life": 180,
+      "learning_rate": 0.03
+    },
+    {
+      "half_life": 90,
+      "learning_rate": 0.06
+    }
+  ],
+  "temperatures": [
+    0.8,
+    0.8,
+    0.8
+  ],
+  "weights": [
+    0.3242395882364217,
+    0.3365375697716184,
+    0.33922284199195984
+  ],
+  "validation_source_hashes": {
+    "2024-25": "c3d18f552d83382cd4b6b21127adbbfe38e7f8618ddc979fb5404f2df07d0a75",
+    "2025-26": "d6070bdf731546ccf97767f062e8af4bd26dd309dee69f6092025bf9c78f43c1"
+  },
+  "validation_status": "retrospective selection; prospective calibration unverified"
+}

@@ -84,3 +84,7 @@ actual chronological comparison. The first candidate did not outperform the
 existing baseline reliably and has NOT replaced it. Reproduce with
 `python -m edge.research.compare`; this is a separate retrospective method study,
 not verified historical point-in-time or profitability evidence.
+
+Current experimental tracker: market-dynamic-v1, with original Poisson comparison
+in GUI reasoning and a separate paper-v3 cohort. See docs/MODEL_RESEARCH.md and
+docs/PAPER_TRACKER.md. Research has not established a profitable betting edge.

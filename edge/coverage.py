@@ -13,7 +13,7 @@ def diagnose(states,matches,as_of):
     entries=[]
     for match in matches:
         c=match['model'].get('history_counts',{}); f=match['fixture']
-        home=c.get('home_team_at_home',0); away=c.get('away_team_away',0); league=c.get('league',0)
+        home=c.get('home_team_total',c.get('home_team_at_home',0)); away=c.get('away_team_total',c.get('away_team_away',0)); league=c.get('league',0)
         def age(team):
             date=latest.get(team)
             return round((datetime.fromisoformat(timestamp(as_of))-datetime.fromisoformat(date)).total_seconds()/86400,1) if date else None

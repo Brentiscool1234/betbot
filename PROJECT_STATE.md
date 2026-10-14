@@ -261,3 +261,20 @@ preserved. Six research tests now pass incl bounded research request protection.
 Final research verification: 63 total tests pass; comparison/market cached replays
 reproduce scores with zero new API calls, research charged/reserved130credits.
 Source/code/parent-report hashes and content-addressed versions retained.
+
+## Experimental live integration — 2026-10-14
+
+Owner requested code integration. Tracker v3 uses market-dynamic-v1 with frozen
+validation-derived temperatures/weights. Eligible observed prior results train
+three dynamic opponent models; fresh consensus odds anchor their probabilities.
+Requires 50 league results and five total prior EPL matches per team, because
+the dynamic model pools venues. Original venue Poisson remains in reasoning.
+No artificial kickoff-day cutoff. Existing EV/edge checks retained; minimum EV
+across the three blended model scenarios must also be positive. This diagnostic
+is not a statistical confidence bound. No proven accuracy or profitability.
+New paper-v3.sqlite preserves separation from paper.sqlite and paper-v2.sqlite;
+older predictions are retained and settled separately. Paper summary describes
+qualifying selections only, not an unbiased all-fixture validation sample.
+Installer deploys research package and frozen configuration. 68 tests passed;
+JavaScript, shell and systemd syntax checks passed. Local scan evaluated 20
+fixtures with new model; none qualified. VPS deployment still requires pull/install.

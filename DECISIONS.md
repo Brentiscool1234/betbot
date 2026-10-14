@@ -70,3 +70,10 @@ force signals. Show current assessment while preserving first paper candidate
 separately, with immutable no-bet assessments and a separate v2 policy cohort.
 Price receipt freshness is distinct from bookmaker last-update time; unchanged
 freshly confirmed quote is eligible. No real-money sizing/placement authorized.
+
+## 2026-10-14: experimental tracker integration
+
+Integrate the researched conservative market adjustment at owner request. Keep
+original Poisson in reasoning, separate paper-v3 cohort and previous records.
+Retain value thresholds and add positive EV across model scenarios. Total-team
+EPL history replaces venue minimum for this model only. No real-money promotion.

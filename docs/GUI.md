@@ -123,3 +123,8 @@ current no-bet can coexist with an original earlier paper selection. Only the
 first qualifying v2 candidate receives one simulated stake. Distinct no-bet
 assessments are retained for audit. Metrics cover this v2 candidate cohort; old
 policy results remain separately retained and settled. No live wager placement.
+
+The v3 reasoning panel shows market-adjusted probabilities, pure football
+probabilities, original Poisson comparison, adjustment weight and scenario EV.
+Percentages are estimated outcome probabilities, not validated confidence.
+After deployment, hard-refresh the browser and use Refresh data for fresh odds.

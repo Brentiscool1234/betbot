@@ -10,13 +10,14 @@ from datetime import datetime,timezone
 from pathlib import Path
 from .store import Store,canonical,digest,timestamp,now
 from .provider import atomic_json
-from .poisson import predict,states_at
+from .poisson import predict as baseline_predict,states_at
+from .forecast import predict,prepare
 
 def code_hash():
-    return digest({name:hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() for name in ('tracker.py','poisson.py','store.py')})
+    return digest({name:hashlib.sha256(Path(__file__).parent.joinpath(name).read_bytes()).hexdigest() for name in ('tracker.py','poisson.py','store.py','forecast.py','research/dynamic.py','research/live_config.json')})
 
 
-POLICY={'version':'paper-rule-v2','minimum_model_ev':0.05,'minimum_edge':0.03,
+POLICY={'version':'paper-rule-v3-market-dynamic','minimum_model_ev':0.05,'minimum_edge':0.03,
         'maximum_quote_receipt_age_seconds':5400,'minimum_bookmakers':2,'prediction_window_hours':None,
         'stake_units':1,'mode':'paper','validation_status':'unvalidated'}
 
@@ -50,7 +51,8 @@ def suggestion(model,prices):
     candidates=[]
     for selection,p in model['probabilities'].items():
         quote=prices['best_prices'][selection]; ev=p*quote['decimal_odds']-1; edge=p-prices['consensus'][selection]
-        if ev>=POLICY['minimum_model_ev'] and edge>=POLICY['minimum_edge']:
+        robust_ev=model.get('scenario_minimum_estimated_ev',{}).get(selection)
+        if ev>=POLICY['minimum_model_ev'] and edge>=POLICY['minimum_edge'] and (robust_ev is None or robust_ev>0):
             candidates.append({'selection':selection,'model_probability':p,'market_probability':prices['consensus'][selection],
                                'model_estimated_ev':ev,'edge':edge,**quote})
     if not candidates: return {'status':'no_paper_bet','reason':'no selection meets the frozen experimental thresholds'}
@@ -58,7 +60,7 @@ def suggestion(model,prices):
     return {'status':'experimental_paper_candidate','stake_units':1,'reason':'unvalidated model; paper simulation only',**best}
 
 
-PAPER_FILENAME='paper-v2.sqlite'
+PAPER_FILENAME='paper-v3.sqlite'
 
 
 class PaperLog:
@@ -116,7 +118,7 @@ class PaperLog:
                 'mean_market_log_loss':sum(s['market_log_loss'] for s in valid)/len(valid) if valid else None,
                 'mean_model_minus_market_brier':sum(s['brier']-s['market_brier'] for s in valid)/len(valid) if valid else None,
                 'mean_log_loss':sum(s['log_loss'] for s in valid)/len(valid) if valid else None,
-                'cohort':'first qualifying paper bet per match under paper-rule-v2; old-policy results stored separately','warning':'experimental paper results; no evidence of profitability'}
+                'cohort':'first qualifying paper bet per match under paper-rule-v3-market-dynamic; older cohorts separate','warning':'experimental paper results; no evidence of profitability'}
 
 
 def scan(directory='data/prospective',current=None):
@@ -130,25 +132,26 @@ def scan(directory='data/prospective',current=None):
         try:
             states=states_at(store.records(version),as_of); output=[]
             paper.settle(states,as_of)
-            previous_policy_summary=None
-            legacy_path=directory/'paper.sqlite'
-            if legacy_path.exists():
-                legacy=PaperLog(legacy_path)
-                try:
-                    legacy.settle(states,as_of)
-                    previous_policy_summary=legacy.summary()
-                    previous_policy_summary['cohort']='previous paper-rule-v1 policy; kept separate'
-                finally: legacy.close()
+            previous_policy_summaries=[]
+            for filename in ('paper.sqlite','paper-v2.sqlite'):
+                if (directory/filename).exists():
+                    legacy=PaperLog(directory/filename)
+                    try:
+                        legacy.settle(states,as_of); summary=legacy.summary()
+                        summary['cohort']=filename+' prior model/policy; kept separate'; previous_policy_summaries.append(summary)
+                    finally: legacy.close()
+            context=prepare(states,as_of)
             for mid,rows in states.items():
                 fixture=next((r for r in rows if r['kind']=='fixture'),None)
                 if not fixture: continue
                 f=fixture['payload']; kickoff=timestamp(f['kickoff'])
                 if kickoff<=as_of: continue
                 if any(r['kind']=='result' for r in rows): continue
-                model=predict(states,mid,as_of); prices=market(rows,as_of); pick=suggestion(model,prices)
+                prices=market(rows,as_of); model=predict(states,mid,as_of,prices,context); pick=suggestion(model,prices)
+                baseline=baseline_predict(states,mid,as_of)
                 body={'match_id':mid,'fixture':f,'prediction_timestamp':as_of,'dataset_version':version,
-                      'tracker_version':'tracker-v2','code_hash':code_hash(),'policy':POLICY,'policy_hash':digest(POLICY),
-                      'model':model,'market':prices,'suggestion':pick}
+                      'tracker_version':'tracker-v3','code_hash':code_hash(),'policy':POLICY,'policy_hash':digest(POLICY),
+                      'baseline_model':baseline,'model':model,'market':prices,'suggestion':pick}
                 paper.assess(body)
                 if pick['status']=='experimental_paper_candidate':
                     paper.freeze(body)  # first qualifying candidate; never replace its recorded price
@@ -163,7 +166,7 @@ def scan(directory='data/prospective',current=None):
             from .coverage import diagnose
             coverage=diagnose(states,output,as_of)
             atomic_json(directory/'coverage.json',coverage)
-            report={'previous_policy_summary':previous_policy_summary,'coverage':coverage,'status':'experimental_paper_tracker','as_of':as_of,'dataset_version':version,'matches':output,'summary':paper.summary()}
+            report={'previous_policy_summaries':previous_policy_summaries,'coverage':coverage,'status':'experimental_paper_tracker','as_of':as_of,'dataset_version':version,'matches':output,'summary':paper.summary()}
             atomic_json(directory/'tracker.json',report)
             return report
         finally: store.close(); paper.close()

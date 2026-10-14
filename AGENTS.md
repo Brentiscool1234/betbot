@@ -20,3 +20,7 @@ no-complex-model guidance. Register attempts, distinguish retrospective method
 studies from verified PIT backtests, retain failed comparisons and do not promote
 an unvalidated candidate or invent novelty/profitability. Production integrity and
 real-money exclusions remain unchanged.
+
+2026-10-14 owner instruction "ok update the code" authorizes integrating the
+researched market-adjusted model as an explicitly experimental paper tracker.
+This is prospective evaluation, not validation or real-money promotion.
