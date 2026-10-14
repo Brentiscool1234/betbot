@@ -6,7 +6,7 @@ from datetime import datetime,timezone,timedelta
 from pathlib import Path
 from edge.poisson import probabilities,predict,states_at
 from edge.store import timestamp,validate,digest,Store
-from edge.tracker import market,suggestion,PaperLog,POLICY,scan
+from edge.tracker import market,suggestion,PaperLog,POLICY,scan,PAPER_FILENAME
 
 
 def observation(mid,kind,payload,available,key=None):
@@ -86,7 +86,7 @@ class PaperTests(unittest.TestCase):
             settled=scan(tmp,current+timedelta(hours=16)); self.assertEqual(settled['summary']['settled_paper_bets'],1)
             self.assertEqual(settled['summary']['paper_profit_units'],3)
             self.assertEqual(scan(tmp,current+timedelta(hours=17))['summary'],settled['summary'])
-            paper=PaperLog(Path(tmp)/'paper.sqlite')
+            paper=PaperLog(Path(tmp)/PAPER_FILENAME)
             for table in ('predictions','settlements'):
                 with self.assertRaises(sqlite3.IntegrityError): paper.db.execute('DELETE FROM '+table)
             paper.close(); store.close()
@@ -96,7 +96,7 @@ class PaperTests(unittest.TestCase):
             store=Store(Path(tmp)/'edge.sqlite'); version=store.ingest(histories(current,4)+odds(current))
             (Path(tmp)/'status.json').write_text(__import__('json').dumps({'dataset_version':version}))
             report=scan(tmp,current); self.assertEqual(report['matches'][0]['model']['status'],'insufficient_data')
-            paper=PaperLog(Path(tmp)/'paper.sqlite'); self.assertEqual(paper.db.execute('SELECT count(*) FROM predictions').fetchone()[0],0)
+            paper=PaperLog(Path(tmp)/PAPER_FILENAME); self.assertEqual(paper.db.execute('SELECT count(*) FROM predictions').fetchone()[0],0)
             paper.close(); store.close()
 
 class AdditionalGuardTests(unittest.TestCase):
@@ -121,7 +121,7 @@ class AdditionalGuardTests(unittest.TestCase):
             store.close()
 
 class HorizonTests(unittest.TestCase):
-    def test_no_candidate_before_paper_window(self):
+    def test_candidate_can_be_prepared_days_before_kickoff(self):
         current=datetime(2026,1,1,tzinfo=timezone.utc)
         with tempfile.TemporaryDirectory() as tmp:
             rows=histories(current)+odds(current)
@@ -132,5 +132,44 @@ class HorizonTests(unittest.TestCase):
             (Path(tmp)/'status.json').write_text(__import__('json').dumps({'dataset_version':version}))
             report=scan(tmp,current)
             self.assertEqual(report['matches'][0]['model']['status'],'experimental_prediction')
-            self.assertEqual(report['matches'][0]['suggestion']['status'],'no_paper_bet')
-            self.assertNotIn('prediction_id',report['matches'][0]); store.close()
+            self.assertEqual(report['matches'][0]['suggestion']['status'],'experimental_paper_candidate')
+            self.assertIn('prediction_id',report['matches'][0]); store.close()
+
+
+class CurrentAssessmentTests(unittest.TestCase):
+    def test_current_prices_change_without_rewriting_first_paper_bet(self):
+        current=datetime(2026,1,1,tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as tmp:
+            store=Store(Path(tmp)/'edge.sqlite'); version=store.ingest(histories(current)+odds(current,4))
+            status=Path(tmp)/'status.json'; status.write_text(__import__('json').dumps({'dataset_version':version}))
+            first=scan(tmp,current)['matches'][0]
+            version=store.ingest(odds(current+timedelta(minutes=10),1.1),version)
+            status.write_text(__import__('json').dumps({'dataset_version':version}))
+            second=scan(tmp,current+timedelta(minutes=10))['matches'][0]
+            self.assertEqual(second['suggestion']['status'],'no_paper_bet')
+            self.assertEqual(second['paper_decision']['prediction_id'],first['paper_decision']['prediction_id'])
+            self.assertEqual(second['paper_decision']['suggestion']['decimal_odds'],4)
+            paper=PaperLog(Path(tmp)/PAPER_FILENAME)
+            self.assertEqual(paper.db.execute('SELECT count(*) FROM predictions').fetchone()[0],1)
+            self.assertEqual(paper.db.execute('SELECT count(*) FROM assessments').fetchone()[0],2)
+            paper.close(); store.close()
+    def test_first_no_bet_does_not_block_later_qualifying_candidate(self):
+        current=datetime(2026,1,1,tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as tmp:
+            store=Store(Path(tmp)/'edge.sqlite'); version=store.ingest(histories(current)+odds(current,1.1))
+            status=Path(tmp)/'status.json'; status.write_text(__import__('json').dumps({'dataset_version':version}))
+            first=scan(tmp,current)['matches'][0]; self.assertNotIn('prediction_id',first)
+            version=store.ingest(odds(current+timedelta(minutes=10),4),version)
+            status.write_text(__import__('json').dumps({'dataset_version':version}))
+            second=scan(tmp,current+timedelta(minutes=10))['matches'][0]
+            self.assertEqual(second['suggestion']['status'],'experimental_paper_candidate'); self.assertIn('paper_decision',second)
+            store.close()
+
+
+class QuoteReceiptTests(unittest.TestCase):
+    def test_unchanged_price_is_usable_when_current_snapshot_confirms_it(self):
+        current=datetime(2026,1,1,tzinfo=timezone.utc); rows=odds(current)
+        for row in rows: row['effective_at']=__import__('edge.store',fromlist=['timestamp']).timestamp((current-timedelta(hours=6)).isoformat())
+        prices=market(rows,current.isoformat())
+        self.assertEqual(prices['status'],'available')
+        self.assertLess(prices['best_prices']['home']['odds_timestamp'],prices['best_prices']['home']['quote_available_at'])

@@ -16,8 +16,8 @@ def code_hash():
     return digest({name:hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() for name in ('tracker.py','poisson.py','store.py')})
 
 
-POLICY={'version':'paper-rule-v1','minimum_model_ev':0.05,'minimum_edge':0.03,
-        'maximum_odds_age_seconds':5400,'minimum_bookmakers':2,'prediction_window_hours':24,
+POLICY={'version':'paper-rule-v2','minimum_model_ev':0.05,'minimum_edge':0.03,
+        'maximum_quote_receipt_age_seconds':5400,'minimum_bookmakers':2,'prediction_window_hours':None,
         'stake_units':1,'mode':'paper','validation_status':'unvalidated'}
 
 
@@ -26,8 +26,8 @@ def market(rows,as_of):
     for r in rows:
         if r['kind']!='odds': continue
         if max(r['available_at'],r['effective_at'],r['observed_at'])>timestamp(as_of): continue
-        age=(cutoff-datetime.fromisoformat(r['effective_at'])).total_seconds()
-        if age<0 or age>POLICY['maximum_odds_age_seconds']: continue
+        age=(cutoff-datetime.fromisoformat(r['available_at'])).total_seconds()
+        if age<0 or age>POLICY['maximum_quote_receipt_age_seconds']: continue
         p=r['payload']; groups.setdefault(p['bookmaker'],{})[p['selection']]=r
     books={b:s for b,s in groups.items() if set(s)=={'home','draw','away'}}
     if len(books)<POLICY['minimum_bookmakers']: return {'status':'unavailable','reason':'need two fresh complete bookmaker quotes','bookmakers':len(books)}
@@ -39,7 +39,7 @@ def market(rows,as_of):
     for selection in consensus:
         book,row=max(((b,s[selection]) for b,s in books.items()),key=lambda item:(item[1]['payload']['decimal_odds'],item[0]))
         best[selection]={'bookmaker':book,'decimal_odds':row['payload']['decimal_odds'],
-                         'odds_timestamp':row['effective_at'],'source_record':digest(row)}
+                         'odds_timestamp':row['effective_at'],'quote_available_at':row['available_at'],'source_record':digest(row)}
     return {'status':'available','vig_method':'proportional-v1','consensus':consensus,'best_prices':best,
             'bookmakers':len(books),'source_records':sorted(digest(r) for s in books.values() for r in s.values())}
 
@@ -58,16 +58,26 @@ def suggestion(model,prices):
     return {'status':'experimental_paper_candidate','stake_units':1,'reason':'unvalidated model; paper simulation only',**best}
 
 
+PAPER_FILENAME='paper-v2.sqlite'
+
+
 class PaperLog:
     def __init__(self,path):
         self.db=sqlite3.connect(path)
         self.db.executescript('''CREATE TABLE IF NOT EXISTS predictions(id TEXT PRIMARY KEY,match_id TEXT UNIQUE NOT NULL,body TEXT NOT NULL);
           CREATE TABLE IF NOT EXISTS settlements(prediction TEXT PRIMARY KEY REFERENCES predictions(id),body TEXT NOT NULL);
+          CREATE TABLE IF NOT EXISTS assessments(id TEXT PRIMARY KEY,body TEXT NOT NULL);
           PRAGMA foreign_keys=ON;''')
-        for table in ('predictions','settlements'):
+        for table in ('predictions','settlements','assessments'):
             for op in ('UPDATE','DELETE'):
                 self.db.execute(f"CREATE TRIGGER IF NOT EXISTS freeze_{table}_{op} BEFORE {op} ON {table} BEGIN SELECT RAISE(ABORT,'immutable paper record'); END")
     def close(self): self.db.close()
+    def assess(self,body):
+        key=digest({k:body[k] for k in ('match_id','fixture','dataset_version','policy_hash','code_hash','model','market','suggestion')})
+        with self.db: self.db.execute('INSERT OR IGNORE INTO assessments VALUES (?,?)',(key,canonical(body)))
+    def frozen(self,match_id):
+        row=self.db.execute('SELECT body FROM predictions WHERE match_id=?',(match_id,)).fetchone()
+        return json.loads(row[0]) if row else None
     def freeze(self,body):
         mid=body['match_id']; existing=self.db.execute('SELECT body FROM predictions WHERE match_id=?',(mid,)).fetchone()
         if existing: return json.loads(existing[0])
@@ -106,7 +116,7 @@ class PaperLog:
                 'mean_market_log_loss':sum(s['market_log_loss'] for s in valid)/len(valid) if valid else None,
                 'mean_model_minus_market_brier':sum(s['brier']-s['market_brier'] for s in valid)/len(valid) if valid else None,
                 'mean_log_loss':sum(s['log_loss'] for s in valid)/len(valid) if valid else None,
-                'warning':'experimental paper results; no evidence of profitability'}
+                'cohort':'first qualifying paper bet per match under paper-rule-v2; old-policy results stored separately','warning':'experimental paper results; no evidence of profitability'}
 
 
 def scan(directory='data/prospective',current=None):
@@ -116,10 +126,19 @@ def scan(directory='data/prospective',current=None):
         try: fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
         except BlockingIOError: return {'status':'locked','matches':[]}
         status=json.loads((directory/'status.json').read_text()); version=status['dataset_version']
-        store=Store(directory/'edge.sqlite'); paper=PaperLog(directory/'paper.sqlite')
+        store=Store(directory/'edge.sqlite'); paper=PaperLog(directory/PAPER_FILENAME)
         try:
             states=states_at(store.records(version),as_of); output=[]
             paper.settle(states,as_of)
+            previous_policy_summary=None
+            legacy_path=directory/'paper.sqlite'
+            if legacy_path.exists():
+                legacy=PaperLog(legacy_path)
+                try:
+                    legacy.settle(states,as_of)
+                    previous_policy_summary=legacy.summary()
+                    previous_policy_summary['cohort']='previous paper-rule-v1 policy; kept separate'
+                finally: legacy.close()
             for mid,rows in states.items():
                 fixture=next((r for r in rows if r['kind']=='fixture'),None)
                 if not fixture: continue
@@ -128,21 +147,23 @@ def scan(directory='data/prospective',current=None):
                 if any(r['kind']=='result' for r in rows): continue
                 model=predict(states,mid,as_of); prices=market(rows,as_of); pick=suggestion(model,prices)
                 body={'match_id':mid,'fixture':f,'prediction_timestamp':as_of,'dataset_version':version,
-                      'tracker_version':'tracker-v1','code_hash':code_hash(),'policy':POLICY,'policy_hash':digest(POLICY),
+                      'tracker_version':'tracker-v2','code_hash':code_hash(),'policy':POLICY,'policy_hash':digest(POLICY),
                       'model':model,'market':prices,'suggestion':pick}
-                hours=(datetime.fromisoformat(kickoff)-current).total_seconds()/3600
-                if hours>POLICY['prediction_window_hours'] and model['status']=='experimental_prediction':
-                    body['suggestion']={'status':'no_paper_bet','reason':'outside the 24-hour paper decision window'}
-                if hours<=POLICY['prediction_window_hours'] and model['status']=='experimental_prediction' and prices['status']=='available':
-                    frozen=paper.freeze(body)
-                    # Present the actual frozen decision/quote, never masquerade it as current.
-                    body=frozen; body['display_note']='frozen paper decision; verify current price separately'
+                paper.assess(body)
+                if pick['status']=='experimental_paper_candidate':
+                    paper.freeze(body)  # first qualifying candidate; never replace its recorded price
+                frozen=paper.frozen(mid)
+                if frozen:
+                    body['paper_decision']={'prediction_id':frozen['prediction_id'],'prediction_timestamp':frozen['prediction_timestamp'],
+                        'suggestion':frozen['suggestion'],'policy_hash':frozen['policy_hash']}
+                    body['prediction_id']=frozen['prediction_id']
+                    body['display_note']='Current assessment; original paper decision retained separately'
                 output.append(body)
             output.sort(key=lambda b:(b['fixture']['kickoff'],b['match_id']))
             from .coverage import diagnose
             coverage=diagnose(states,output,as_of)
             atomic_json(directory/'coverage.json',coverage)
-            report={'coverage':coverage,'status':'experimental_paper_tracker','as_of':as_of,'dataset_version':version,'matches':output,'summary':paper.summary()}
+            report={'previous_policy_summary':previous_policy_summary,'coverage':coverage,'status':'experimental_paper_tracker','as_of':as_of,'dataset_version':version,'matches':output,'summary':paper.summary()}
             atomic_json(directory/'tracker.json',report)
             return report
         finally: store.close(); paper.close()
@@ -161,7 +182,7 @@ def render(report):
             lines.append(f"PAPER BET: {outcome} | Estimated win probability: {pick['model_probability']:.1%} (uncalibrated) | Odds: {pick['decimal_odds']:.2f} at {pick['bookmaker']} | 1 simulated unit")
             lines.append(f"Model-estimated EV: {pick['model_estimated_ev']:.1%}; probability is not confidence of profitability.")
         else: lines.append('NO BET (paper): '+pick.get('reason','unavailable'))
-        if 'prediction_id' in row: lines.append('Frozen at '+row['prediction_timestamp']+'; quote is not guaranteed current.')
+        if row.get('paper_decision'): lines.append('Original paper decision recorded at '+row['paper_decision']['prediction_timestamp']+'; current assessment may differ.')
     lines.append('\n'+json.dumps(report.get('summary',{})))
     return '\n'.join(lines)
 

@@ -195,3 +195,23 @@ sample, retention/use-rights and final <=EUR35 checkout total need verification.
 Sportmonks EUR29 before tax may exceed cap (e.g.35.09at21%VAT). No new provider
 connected, no account/trial/payment activated. Next: user-owned free provider
 account/sample, then reviewed adapter. See docs/CONSISTENT_DATA.md.
+
+## Remove artificial cutoff under owner instruction
+
+Owner explicitly rejects the24h restriction. Paper policy v2 now evaluates all
+upcoming fixtures once adequate observed history and current confirmed quotes
+exist. Thresholds/history/bookmaker requirements retained. Freshness uses actual
+quote availability<=90min; unchanged but freshly confirmed prices are usable,
+with price-update timestamp preserved separately.
+
+Tracker-v2 displays current assessment rather than overwriting it with an old
+frozen decision. Distinct input/decision assessments immutable; first qualifying
+candidate alone receives a frozen simulated stake. A previous no-bet cannot block
+later candidates. Separate paper-v2.sqlite preserves old paper.sqlite/v1 records
+and independently settles both policy cohorts. GUI shows original paper timestamp/
+selection separately and removes cutoff copy. Current results are unvalidated
+paper candidates, not real-money stakes or confidence of profit.
+
+57 tests pass including early candidates, no-bet to candidate, changed prices
+without frozen overwrite and quote receipt/change distinction. Owner policy change
+registered before live v2 acquisition. VPS requires usual pull/install/reload.

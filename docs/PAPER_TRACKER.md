@@ -116,3 +116,31 @@ Display format: PAPER BET: Team to win (or Draw) | Estimated win probability:
 65.0% (uncalibrated) | Odds: 2.10 at bookmaker | 1 simulated unit. The probability
 is an outcome estimate, not confidence that the bet is profitable. NO BET (paper)
 retains the reason. Display formatting does not change frozen decisions.
+
+## Current policy v2 — 2026-10-14 (supersedes the 24h rule above)
+
+Owner explicitly requests working early selections without an artificial cutoff.
+All future fixtures are evaluated as soon as enough observed history and fresh
+complete quotes exist. The 24-hour window and wait-until-Friday behavior described
+in earlier sections are obsolete for v2. No prediction is made after kickoff.
+Minimum history, bookmaker count and EV/edge thresholds remain unchanged.
+
+Freshness uses actual quote availability/receipt age <=90min, not the time at which
+the bookmaker last changed its price. An unchanged price confirmed in a current
+provider snapshot is usable; the actual price-update timestamp remains recorded
+and visible separately. Quotes still are not guaranteed execution prices.
+
+The GUI/terminal show the CURRENT assessment and quote, which can change to no-bet
+or another candidate after ingestion. Every distinct model/input/price/decision
+assessment is immutable. The first qualifying paper candidate per match is frozen
+once in paper-v2.sqlite; an earlier no-bet assessment cannot prevent a later paper
+candidate. The original stake and price are never rewritten when current display
+changes. Original paper timestamp/selection/quote remain in match details.
+
+The paper-results metrics refer to first qualifying v2 paper candidates only,
+not all matches or all changing display suggestions. Prior paper.sqlite/v1 records
+remain unchanged and settle as a separate cohort; previous-policy metrics are
+returned separately, never blended into v2. Include both logs in private backups.
+This owner-directed timing policy change is registered before v2 live acquisition.
+No recalibration or tuning based on outcomes has been performed, and no calibrated
+confidence/profitability or real-money recommendation is claimed.

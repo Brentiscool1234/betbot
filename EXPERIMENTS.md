@@ -26,3 +26,19 @@ no real-data forecasts settled or rule tuned. Input history now contains 778
 additional results available from receipt onward. Archive/source/code/version
 hashes remain part of each future prediction. Community coverage gaps and
 unvalidated/calibration limits remain. No historical backtest using backdated labels.
+
+## paper-rule-v2 — owner-authorized timing change 2026-10-14
+
+Owner explicitly removed the arbitrary 24-hour gate. Any future fixture with
+adequate point-in-time history and freshly confirmed complete quotes is evaluated.
+Thresholds unchanged: >=5% model-estimated EV and >=3pp market disagreement,
+two bookmakers, one simulated unit. Quote freshness uses evidenced availability
+within90min, retaining actual bookmaker update time separately. Price unchanged
+does not imply quote unobserved. No post-outcome threshold tuning performed.
+Display is always current assessment; all distinct input/decision assessments
+are immutable. Freeze only first qualifying paper candidate per match in separate
+paper-v2.sqlite. Earlier non-bet assessments do not permanently prevent a later
+candidate. Recorded stake/quote is never changed by subsequent display updates.
+Old paper.sqlite remains a separate policy cohort and settles independently.
+No real-money readiness, calibration or profit claim. Code/model/dataset/policy
+hashes remain recorded. This rule change precedes live acquisition under v2.

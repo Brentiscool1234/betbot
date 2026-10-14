@@ -107,3 +107,19 @@ JSON snapshots cannot start refresh; reconnect to the VPS first.
 Apply with the usual git pull and sudo bash configs/install-vps.sh on the VPS,
 then refresh the browser page. No additional subscription required. Browser visual
 QA remains unverified; HTTP/security/job and JavaScript syntax checks were run.
+
+## No artificial prediction cutoff — owner update 2026-10-14
+
+Current GUI assesses every upcoming fixture, even several days before kickoff.
+The old next-24h-window notice is removed. A fresh qualifying quote/history shows
+PAPER BET immediately; data shortages/stale observations/failed thresholds retain
+specific no-bet reasons. The price-update and actual availability timestamps are
+shown separately in reasoning. Refresh data acquires snapshots; browser Reload
+view reads the latest assessment. Neither can force a model to support a bet.
+
+Cards show CURRENT assessments and quotes, not substituted historical paper
+snapshots. Original paper decision timestamp is separate in footer/details; a
+current no-bet can coexist with an original earlier paper selection. Only the
+first qualifying v2 candidate receives one simulated stake. Distinct no-bet
+assessments are retained for audit. Metrics cover this v2 candidate cohort; old
+policy results remain separately retained and settled. No live wager placement.

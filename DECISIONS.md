@@ -63,3 +63,10 @@ Investigate API-Football USD19 Pro as a candidate rather than assuming Sportmonk
 EUR29+tax fits the cap. No paid account/credentials, checkout or provider rights
 are invented; sample/rights/cost verification precedes paid integration. Promoted
 teams can remain legitimately unsupported; no automatic lower-league substitution.
+
+2026-10-14: Owner removes artificial 24-hour timing gate. Evaluate all future
+fixtures with adequate history/observed quotes. Keep value/data criteria; do not
+force signals. Show current assessment while preserving first paper candidate
+separately, with immutable no-bet assessments and a separate v2 policy cohort.
+Price receipt freshness is distinct from bookmaker last-update time; unchanged
+freshly confirmed quote is eligible. No real-money sizing/placement authorized.
