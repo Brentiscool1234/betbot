@@ -13,3 +13,10 @@ experimental Poisson baseline and paper-only tracker are now explicitly requeste
 Implement those with integrity checks and no false readiness/profitability claim.
 Historical acceptance and model validation gates remain incomplete. No complex ML,
 consumer dashboard, real-money staking or bet-placement integration authorized.
+
+2026-10-14 owner explicitly requests substantive new formula/model research.
+Bounded quarantined research models/comparisons are authorized despite previous
+no-complex-model guidance. Register attempts, distinguish retrospective method
+studies from verified PIT backtests, retain failed comparisons and do not promote
+an unvalidated candidate or invent novelty/profitability. Production integrity and
+real-money exclusions remain unchanged.

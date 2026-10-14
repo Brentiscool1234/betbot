@@ -75,3 +75,12 @@ History now checks the latest CC0 snapshot automatically each day, with failure/
 staleness health checks and a per-match venue-history gap report in the GUI.
 See [continuous-data setup and paid-source comparison](docs/CONSISTENT_DATA.md).
 No additional paid statistics provider has been connected yet.
+
+## Research evidence, including failed models
+
+[Model research report](docs/MODEL_RESEARCH.md) covers primary literature, a
+concrete opponent-adjusted formula, conservative market-residual proposal, and
+actual chronological comparison. The first candidate did not outperform the
+existing baseline reliably and has NOT replaced it. Reproduce with
+`python -m edge.research.compare`; this is a separate retrospective method study,
+not verified historical point-in-time or profitability evidence.

@@ -219,3 +219,41 @@ registered before live v2 acquisition. VPS requires usual pull/install/reload.
 Live v2 acquisition completed successfully: 12 experimental paper candidates,
 4 insufficient-history fixtures and 4 no-value decisions. No timing-gate decisions
 remain. This verifies behavior only, not accuracy/calibration/profitability.
+
+## Substantive model research
+
+Owner asks for original high-quality model/formula. Primary literature searched:
+Dixon-Coles, dynamic bivariate strengths, hierarchical overshrinkage, odds-based
+ratings and logarithmic model/market pooling. Global novelty/performance cannot
+be promised. Quarantined dynamic opponent-adjusted learner + low-score correction,
+three adaptation scenarios, validation temperature scaling/ensemble implemented.
+Custom conservative market-residual/history/disagreement gate is research-only.
+
+Registered split/trials BEFORE comparison:203initial training,177validation,
+353chronological2025/26test events, entire-day forecasts before updates. Latest
+corrected public records lack historical publication evidence: retrospective
+method study NOT verified PIT/backtest/lockbox; production availability unchanged.
+
+Result on325common supportedmatches: candidate logloss1.022883 vs current1.019944,
+Brier.613178 vs .611406; paired date-block approximate95% loss-difference interval
+[-.015088,+.025361]. Candidate slightly worse, no reliable improvement. Acrossall
+353candidatebeatsleague-only1.060533 with1.016824, not market superiority. No suitable
+held-out-market quotes, ROI orCLV evaluated. Failed superiority attempt retained.
+Active GUI/model unchanged. Report: docs/MODEL_RESEARCH.md; raw/private experiment
+results data/research/dynamic-v1/report.json. Research code requires no paid API.
+Five new research tests pass: probability/dependence, opponent learning, clock
+order/decay, unknown-history residualgate and future-label/calibration isolation.
+
+## Direct market research benchmark
+
+Registered and acquired a bounded historical2025odds sample using existing plan:
+13weekly snapshots/130credits,100unique result-matched fixtures. Candidate trained
+only from corrected event dates at least3calendar days before each snapshot;
+this is hypothetical publication, not production backdating or verifiedPIT.
+Fixed validation-derived calibration/weights/residual gate, no test tuning.
+Market logloss.952386 vs dynamic.970918 vs fixed residualproposal.949729.
+Proposal improvement tiny .002657; approximate95%paired date-block interval
+[-.007498,+.002688] crosses0. No proven edge, confidence or ROI. Source horizons
+7.07–415.07h; sample incomplete/inspected. Cached replay0calls; charges130retained.
+Active model not replaced. Content-addressed experiment reports and all failures
+preserved. Six research tests now pass incl bounded research request protection.
